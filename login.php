@@ -15,24 +15,27 @@
 
             <h1 class="display-6 m-4 text-center">Giriş Yap</h1>
 
-            <div class="container">
-                <label for="mail">E-Posta</label>
-                <input type="email" name="mail" class="form-control" id="" autocomplete="on" required>
-            </div>
-        
-            <div class="container">
-                <label for="password">Şifre</label>
-                <input type="password" name="password" class="form-control" id="" autocomplete="on" required>
+            <div class="row">
+                <div class="col container">
+                    <label for="mail">E-Posta</label>
+                    <input type="email" name="mail" class="form-control" id="" autocomplete="on" required>
+                </div>
             </div>
 
-            <div class="container pt-2">
-                <input type="checkbox" name="remberme" id="">
-                <label for="remberbe"> Beni Hatırla</label>
-            </div>
-    
-            <input type="submit" class="btn btn-primary p-2 m-2 w-100" value="Giriş Yap">
+            <div class="row">
+                <div class="container">
+                    <label for="password">Şifre</label>
+                    <input type="password" name="password" class="form-control" id="" autocomplete="on" required>
+                </div>
 
-            <p class="pt-2 text-center">Bir hesabınız yok mu <a href="register.php">Hemen Kayıt Olun.</a></p>
+                <div class="container pt-2 ms-1">
+                    <input type="checkbox" name="remberme" id="">
+                    <label for="remberbe"> Beni Hatırla</label>
+                </div>
+            </div>
+
+                <input type="submit" class="btn btn-primary p-2 m-2 w-100" value="Giriş Yap">
+                <p class="pt-2 text-center">Bir hesabınız yok mu <a href="register.php">Hemen Kayıt Olun.</a></p>
         </form>
 
        
