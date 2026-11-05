@@ -18,9 +18,9 @@ include("config.php");
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
+        <div class="container-fluid w-75">
 
-            <a href="#" class="navbar-brand">MyNot</a>
+            <a href="index.php" class="navbar-brand">MyNot</a>
 
             <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse"
@@ -35,7 +35,7 @@ include("config.php");
 
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="#" class="nav-link active">Ana Sayfa</a>
+                        <a href="index.php" class="nav-link active">Ana Sayfa</a>
                     </li>
 
                     <li class="nav-item">
@@ -45,13 +45,13 @@ include("config.php");
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="register.php" class="nav-link">
                             <i data-lucide="user"></i> Kayıt Ol
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="login.php" class="nav-link">
                             <i data-lucide="key-round"></i> Giriş Yap
                         </a>
                     </li>

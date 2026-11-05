@@ -111,8 +111,8 @@ while ($row = $result->fetch_assoc()) {
 
 </div>
 
-    <div id="gorevAdd" class="container-fluid d-flex bg-white p-2 border-0 rounded-2">
-        <form class="d-flex w-100" action="system/task_add.php" method="POST">
+    <div id="gorevAdd" class="container-fluit d-flex bg-white p-2 border-0 rounded-2">
+        <form class="d-flex w-50 m-auto" action="system/task_add.php" method="POST">
             <input type="text" name="task" class="form-control">
             <input type="submit" class="bg-primary border-0 rounded-1 text-white p-2" id="gorev_add_btn" value="+">
         </form>
