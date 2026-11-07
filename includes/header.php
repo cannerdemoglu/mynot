@@ -8,57 +8,33 @@ include_once(__DIR__ . "/../config.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../main/img/favicon.ico" type="image/x-icon">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <title>MyNot</title>
+    
+    <title>DayNot</title>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid w-75">
+    <div id="headerMain" class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <a href="index.php" class="text-decoration-none">
+                    <h1 id="headerBrandName">Day Not</h1>
+                </a>
+            </div>
 
-            <a href="index.php" class="navbar-brand">MyNot</a>
-
-            <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu"
-                aria-controls="navbarMenu"
-                aria-expanded="false"
-                aria-label="Menüyü aç">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarMenu">
-
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a href="index.php" class="nav-link active">Ana Sayfa</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Bize Ulaşın</a>
-                    </li>
+            <div id="colHide" class="col d-flex justify-content-center align-items-center">
+                <ul id="headerMenu" class="list-unstyled d-flex justify-content-center align-items-center gap-5 text-white mb-0">
+                    <li>Hakkımızda</li>
+                    <li>İletişim</li>
                 </ul>
+            </div>
 
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="register.php" class="nav-link">
-                            <i data-lucide="user"></i> Kayıt Ol
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="login.php" class="nav-link">
-                            <i data-lucide="key-round"></i> Giriş Yap
-                        </a>
-                    </li>
-                </ul>
-
+            <div class="col d-flex justify-content-end align-items-center gap-3">
+                <a id="headerLogin" href="login.php">Giriş Yap</a>
+                <a id="headerRegister" class="btn btn-primary" href="register.php">Hemen Başla</a>
             </div>
         </div>
-    </nav>
-
-    <script>
-        lucide.createIcons();
-    </script>
+    </div>

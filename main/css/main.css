@@ -1,14 +1,54 @@
 * {
-    font-size: 16px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: poppinsRegular;
 }
 
 :root {
-    --aColor : #09090b;
-    --bColor : #FFFFFF;
-    --bgColor : #1C1B1D;
-    --secondaryColor : #353437;
+    --aColor: #09090b;
+    --bColor: #FFFFFF;
+    --bgColor: #1C1B1D;
+    --secondaryColor: #353437;
     --Primary: #FFFFFF;
+    --Blue: #3955A2;
+}
+
+html {
+    height: 100%;
+    background-color: var(--aColor);
+}
+
+body {
+    font-size: 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    background-color: var(--aColor);
+    background-image: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(57, 85, 162, 0.28) 0%, rgba(57, 85, 162, 0.08) 45%, transparent 75%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    overflow-x: hidden;
+}
+
+@font-face {
+    font-family: daynotFont;
+    src: url(../fonts/notdayfont.ttf);
+}
+
+@font-face {
+    font-family: poppinsRegular;
+    src: url(../fonts/poppinsRegular.ttf);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    color: white;
 }
 
 a {
@@ -29,36 +69,247 @@ input[type=password]:focus {
     color: white;
 }
 
+/* HEADER & FOOTER */
+
+#headerMain {
+    padding: 15px 40px;
+    width: 100%;
+    background-color: transparent;
+    position: relative;
+    z-index: 10;
+}
+
+#headerBrandName {
+    font-family: daynotFont !important;
+    font-size: 36px !important;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1;
+}
+
+#headerMenu {
+    font-family: poppinsRegular, sans-serif;
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+#headerMenu li {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+#headerMenu li:hover {
+    opacity: 0.7;
+}
+
+#headerLogin {
+    font-family: poppinsRegular, sans-serif;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 8px 14px;
+    transition: opacity 0.2s ease;
+}
+
+#headerLogin:hover {
+    opacity: 0.8;
+}
+
+#headerRegister {
+    font-family: poppinsRegular, sans-serif;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    background-color: var(--Primary);
+    color: var(--aColor);
+    border: none;
+    font-weight: 500;
+}
+
+
+/* HOMEPAGE PAGES */
+
+#homepageDiv {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    position: relative;
+    background-color: transparent;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 3rem;
+}
+
+.daynot,
+.daynot span,
+#daynotText {
+    font-family: daynotFont !important;
+    font-size: 90px !important;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.1;
+    display: inline-block;
+}
+
+.daynot * {
+    font-family: daynotFont !important;
+    font-size: 90px !important;
+}
+
+.app-tag {
+    font-family: poppinsRegular, sans-serif !important;
+    font-size: 18px;
+    color: #ffffff !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 14px;
+    margin-left: 4px;
+    line-height: 1;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.buttons a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 28px;
+    border-radius: 6px;
+    font-family: poppinsRegular, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    min-width: 170px;
+    transition: all 0.25s ease;
+}
+
+.btn-start {
+    background-color: var(--bColor);
+    color: var(--aColor) !important;
+    border: 1px solid var(--bColor);
+}
+
+.btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+    background-color: #f4f4f5;
+}
+
+.btn-login {
+    background-color: var(--secondaryColor);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    background-color: #434246;
+}
+
+
+
+/* LOGIN & REGISTER PAGES */
+
 #loginDiv {
-    background-color: var(--aColor);
-    height: 100vh;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: transparent;
     color: white;
 }
 
 #loginBox {
     background-color: var(--bgColor);
-    width: 60vh;
-    padding: 1rem;
-    border: 1px solid transparent;
-    border-radius: 2px;
+    max-width: 440px;
+    width: 100%;
+    padding: 2.2rem 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+.login-brand {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 0.25rem;
+}
+
+.login-brand-title {
+    font-family: daynotFont !important;
+    font-size: 52px !important;
+    margin: 0;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.login-brand-tag {
+    font-family: poppinsRegular, sans-serif !important;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
 }
 
 #loginBtns {
-    width: 95%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin: 1.25rem auto 1rem !important;
 }
 
 #loginBtn {
-    background-color: var(--secondaryColor);
-    color: whitesmoke;
+    color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
-    padding: 5px;
-    width: 10vh;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: poppinsRegular, sans-serif;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
     border: 1px solid transparent;
-    border-radius: 4px;
+    background-color: transparent;
 }
 
 #loginBtn:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+#loginBtn.active {
     background-color: var(--aColor);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 #loginFormBox {
@@ -67,27 +318,75 @@ input[type=password]:focus {
 }
 
 #loginFormBox label {
-    padding-top: 1rem;
-    padding-bottom: 5px;
+    font-family: poppinsRegular, sans-serif;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+    padding-top: 0.85rem;
+    padding-bottom: 4px;
 }
 
-#loginFormBox input {
+#loginFormBox input.form-control {
     background-color: var(--secondaryColor);
-    border: 0;
-    border-radius: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#loginFormBox input.form-control:focus {
+    background-color: #242326;
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+    color: #ffffff;
 }
 
 #loginFormBox input::placeholder {
-    color: rgba(245, 245, 245, 0.233);
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 13px;
 }
 
 #loginSubmit {
     background-color: var(--Primary) !important;
-    color: var(--aColor);
+    color: var(--aColor) !important;
     width: 100%;
-    font-weight: 500;
-    border: 1px solid transparent;
-    border-radius: 4px !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 11px;
+    border: none;
+    border-radius: 6px !important;
+    margin-top: 1.25rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#loginSubmit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+    background-color: #f4f4f5 !important;
+}
+
+.google-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: poppinsRegular, sans-serif;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.google-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 #passwordForgot {
@@ -98,12 +397,261 @@ input[type=password]:focus {
     font-size: 14px !important;
 }
 
-#homepageDiv {
-    background-color: var(--aColor);
-    height: 100vh;
-    color: white;
+#passwordForgot a {
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 13px;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
-#homemainDiv {
-    background-color: var(--secondaryColor);
+#passwordForgot a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.remember-label {
+    color: #ffffff !important;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    #colHide {
+        display: none !important;
+    }
+
+    #daynotText {
+        font-size: 60px !important;
+    }
+
+    #headerRegister {
+        padding: 8px 10px;
+        font-size: 12px;
+        width: 120px;
+    }
+
+    #headerLogin {
+        padding: 8px 10px;
+        font-size: 12px;
+        width: 80px;
+    }
+
+    #headerMain {
+        padding: 10px 10px;
+    }
+
+    .buttons {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
+        max-width: 360px !important;
+        margin: 0 auto !important;
+    }
+
+    .buttons a {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+    }
+}
+
+/* TASK PAGE */
+
+#taskWrapper {
+    flex: 1;
+    width: 100%;
+    padding: 2rem 1rem 6.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+#taskContainer {
+    max-width: 680px;
+    width: 100%;
+}
+
+.task-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.task-page-title {
+    font-family: poppinsRegular, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.task-item {
+    background-color: var(--bgColor);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    background-color: #232225;
+}
+
+.task-item .flex-grow-1 {
+    color: #ffffff;
+    font-family: poppinsRegular, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.task-item .text-muted.small {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 12px !important;
+    margin-top: 3px;
+}
+
+.complete-btn {
+    background-color: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
+    border: 1px solid rgba(34, 197, 94, 0.35) !important;
+    border-radius: 8px !important;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.complete-btn:hover {
+    background-color: #22c55e !important;
+    color: #000000 !important;
+}
+
+.delete-btn {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    border-radius: 8px !important;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.completed-toggle-btn {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    border-radius: 8px !important;
+    padding: 12px 18px !important;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    font-family: poppinsRegular, sans-serif;
+    transition: all 0.2s ease;
+}
+
+.completed-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+#completedList .task-item {
+    background-color: rgba(28, 27, 29, 0.45);
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+#completedList .flex-grow-1 {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+#gorevAdd {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 680px;
+    background-color: rgba(28, 27, 29, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 8px 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+#gorevAdd form {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+#gorevAdd input[type=text] {
+    background-color: var(--secondaryColor) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #ffffff !important;
+    flex: 1;
+}
+
+#gorevAdd input[type=text]:focus {
+    background-color: #242326 !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05) !important;
+}
+
+#gorev_add_btn {
+    width: 42px;
+    height: 42px;
+    background-color: var(--Primary) !important;
+    color: var(--aColor) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+    padding: 0;
+}
+
+#gorev_add_btn:hover {
+    transform: scale(1.05);
+    background-color: #f4f4f5 !important;
 }
