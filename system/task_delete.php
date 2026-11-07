@@ -1,11 +1,12 @@
 <?php
 session_start();
-include("../includes/header.php");
+include("../config.php");
 
-if(!isset($_SESSION["u_ID"])){
+if (!isset($_SESSION["u_ID"])) {
     http_response_code(401);
     exit;
 }
+
 $userID = $_SESSION["u_ID"];
 $taskID = $_POST["taskID"];
 
@@ -17,6 +18,5 @@ $stmt = $conn->prepare(
 $stmt->bind_param("ii", $taskID, $userID);
 $stmt->execute();
 
-echo"Başarılı";
-
+echo "success";
 ?>

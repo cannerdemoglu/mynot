@@ -1,24 +1,23 @@
 <?php 
 session_start();
-include("../includes/header.php");
+include("../config.php");
 
 if (!isset($_SESSION["u_ID"])) {
-http_response_code(401);
-exit;
+    http_response_code(401);
+    exit;
 }
 
 $userID = $_SESSION["u_ID"];
-$taskID = $_SESSION["taskID"];
+$taskID = $_POST["taskID"];
 
 $stmt = $conn->prepare(
-"UPDATE tasks
-SET isCompleted = 1
-WHERE taskID = ? AND uID = ?"
+    "UPDATE tasks
+     SET isCompleted = 1
+     WHERE taskID = ? AND uID = ?"
 );
 
-$stmt->bind_param("ii", $userID, $taskID);
+$stmt->bind_param("ii", $taskID, $userID);
 $stmt->execute();
 
-echo"Başarılı";
-
+echo "success";
 ?>

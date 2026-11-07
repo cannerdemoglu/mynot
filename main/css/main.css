@@ -1,0 +1,109 @@
+* {
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --aColor : #09090b;
+    --bColor : #FFFFFF;
+    --bgColor : #1C1B1D;
+    --secondaryColor : #353437;
+    --Primary: #FFFFFF;
+}
+
+a {
+    text-decoration: none;
+    color: whitesmoke;
+}
+
+input[type=text],
+input[type=email],
+input[type=password] {
+    color: white;
+}
+
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus {
+    background-color: black;
+    color: white;
+}
+
+#loginDiv {
+    background-color: var(--aColor);
+    height: 100vh;
+    color: white;
+}
+
+#loginBox {
+    background-color: var(--bgColor);
+    width: 60vh;
+    padding: 1rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+}
+
+#loginBtns {
+    width: 95%;
+}
+
+#loginBtn {
+    background-color: var(--secondaryColor);
+    color: whitesmoke;
+    text-decoration: none;
+    padding: 5px;
+    width: 10vh;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#loginBtn:hover {
+    background-color: var(--aColor);
+}
+
+#loginFormBox {
+    text-align: left;
+    color: whitesmoke;
+}
+
+#loginFormBox label {
+    padding-top: 1rem;
+    padding-bottom: 5px;
+}
+
+#loginFormBox input {
+    background-color: var(--secondaryColor);
+    border: 0;
+    border-radius: 1px;
+}
+
+#loginFormBox input::placeholder {
+    color: rgba(245, 245, 245, 0.233);
+}
+
+#loginSubmit {
+    background-color: var(--Primary) !important;
+    color: var(--aColor);
+    width: 100%;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 4px !important;
+}
+
+#passwordForgot {
+    display: flex;
+    justify-content: flex-end;
+    text-align: right !important;
+    left: 0;
+    font-size: 14px !important;
+}
+
+#homepageDiv {
+    background-color: var(--aColor);
+    height: 100vh;
+    color: white;
+}
+
+#homemainDiv {
+    background-color: var(--secondaryColor);
+}
