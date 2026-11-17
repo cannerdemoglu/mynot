@@ -1,103 +1,134 @@
 <?php
-session_start(); 
 
-if (!isset($_SESSION["u_ID"])) {
-    header("Location: login.php");
-    exit;
-}
+include("includes/header.php");
 
-include("includes/header.php"); 
+$u_ID = $_SESSION['u_ID'];
 
-$userID = $_SESSION["u_ID"];
+$sql = "SELECT taskID, task, isCompleted, createdAt
+        FROM tasks
+        WHERE uID = ?
+        ORDER BY isCompleted ASC, createdAt DESC";
 
-$stmt = $conn->prepare(
-    "SELECT taskID, task, isCompleted, createdAt
-    FROM tasks
-    WHERE uID = ?
-    ORDER BY isCompleted ASC, createdAt DESC"
-);
-
-$stmt->bind_param("i", $userID);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $u_ID);
 $stmt->execute();
 
 $result = $stmt->get_result();
 
-$activeTasks = [];
-$completedTasks = [];
-
-while ($row = $result->fetch_assoc()) {
-    if ($row["isCompleted"]) {
-        $completedTasks[] = $row;
-    } else {
-        $activeTasks[] = $row;
-    }
-}
 ?>
-<link rel="stylesheet" href="main/css/main.css">
 
-<div id="taskWrapper">
-    <div id="taskContainer">
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görevler</title>
+</head>
+<body>
 
-        <div class="task-page-header">
-            <h4 class="task-page-title">
-                <i data-lucide="check-square" style="color: var(--Blue); width: 22px; height: 22px;"></i>
-                Görevlerim
-            </h4>
-            <span class="badge" style="background: rgba(255,255,255,0.06); font-family: poppinsRegular; border: 1px solid rgba(255,255,255,0.08); font-size: 13px; font-weight: normal; padding: 6px 12px; border-radius: 20px;">
-                Aktif: <?= count($activeTasks) ?>
-            </span>
+<div id="bildirim" class="alert alert-success"></div>
+
+<div id="taskList" class="container">
+
+    <?php while ($gorev = $result->fetch_assoc()): ?>
+
+        <div class="gorevList mb-3  p-3">
+
+            <input type="checkbox"
+                data-id="<?php echo $gorev['taskID']; ?>"
+                <?php echo $gorev['isCompleted'] ? 'checked' : ''; ?>>
+
+            <?php echo htmlspecialchars($gorev['task']); ?>
+
+            <small class="text-muted">
+                <?php echo $gorev['createdAt']; ?>
+            </small>
         </div>
 
-        <div id="activeTasks">
-            <?php foreach ($activeTasks as $row) { ?>
-                <div class="task-item" data-id="<?= $row["taskID"] ?>">
-                    <div class="flex-grow-1">
-                        <?= htmlspecialchars($row["task"]) ?>
-                        <div class="text-muted small">
-                            <?= htmlspecialchars($row["createdAt"]) ?>
-                        </div>
-                    </div>
-                    <button class="complete-btn" title="Görevi Tamamla">✓</button>
-                </div>
-            <?php } ?>
-        </div>
+    <?php endwhile; ?>
 
-        <div class="mt-4">
-            <button class="completed-toggle-btn"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#completedTasks">
-                ✓ Tamamlananlar <span id="completedCount" class="ms-1 badge bg-secondary"><?= count($completedTasks) ?></span>
-            </button>
+</div>
 
-            <div class="collapse mt-2" id="completedTasks">
-                <div id="completedList">
-                    <?php foreach ($completedTasks as $row) { ?>
-                        <div class="task-item" data-id="<?= $row["taskID"] ?>">
-                            <div class="flex-grow-1 text-decoration-line-through">
-                                <?= htmlspecialchars($row["task"]) ?>
-                            </div>
-                            <button class="delete-btn" title="Görevi Sil">🗑</button>
-                        </div>
-                    <?php } ?>
-                </div>
-            </div>
-        </div>
 
-    </div>
+<div id="gorevBox" class="container-fluid position-fixed bottom-0 mb-4 align-items-center justify-content-center">
+    <div id="taskBox" class="container d-flex align-items-center justify-content-center mt-auto">
 
-    <div id="gorevAdd">
-        <form action="system/task_add.php" method="POST">
-            <input type="text" name="task" class="form-control" placeholder="Yeni görev ekle..." required autocomplete="off">
-            <button type="submit" id="gorev_add_btn">+</button>
+        <form id="gorevForm" action="system/task_add.php" method="POST"
+            style="background: transparent; border:0;"
+            class="form-control d-flex align-items-center justify-content-center">
+
+            <input type="text" name="gorevEkle" id="gorevEkle"
+                class="form-control" placeholder="Görev Ekle">
+
+            <input type="submit" value="Ekle"
+                class="btn btn-primary m-3" id="gorevEkleBtn">
+
         </form>
     </div>
 </div>
 
-<script src="system/js/task_system.js"></script>
+
 <script>
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+document.getElementById("gorevForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("system/task_add.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+
+        document.getElementById("gorevEkle").value = "";
+
+        const bildirim = document.getElementById("bildirim");
+
+        bildirim.innerHTML = "<p>Görev Eklendi</p>";
+        bildirim.style.display = "flex";
+        bildirim.style.animation = "bildirimAnimasyonu 0.5s ease forwards";
+
+        setTimeout(function() {
+            bildirim.style.display = "none";
+            bildirim.innerHTML = "";
+            bildirim.style.animation = "";
+        }, 2000);
+    });
+});
+
+document.querySelectorAll("#taskList input[type='checkbox']").forEach(checkbox => {
+
+    checkbox.addEventListener("change", function() {
+
+        const taskID = this.dataset.id;
+        const isCompleted = this.checked ? 1 : 0;
+
+        const formData = new FormData();
+
+        formData.append("taskID", taskID);
+        formData.append("isCompleted", isCompleted);
+
+        fetch("system/task_update.php", {
+        method: "POST",
+        body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+        console.log("PHP Cevabı:", data);
+        })
+        .catch(error => {
+        console.log("Fetch Hatası:", error);
+        });
+
+    });
+
+});
+
 </script>
+
 </body>
 </html>
+
+<?php include("includes/footer.php"); ?>

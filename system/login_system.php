@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["u_ID"] = $user["u_ID"];
             $_SESSION["u_name"] = $user["u_name"];
 
-            header("Location: ../index.php");
+            header("Location: ../dashboard.php");
             exit();
         } else {
             echo "Şifre Yanlış !";

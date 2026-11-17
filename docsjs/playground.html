@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deneme Alanı</title>
+    <meta name="description" content="HTML, CSS, JavaScript ve ApexCharts kodlarını tarayıcıda canlı deneme alanı.">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+
+    <style>
+        :root {
+            --bg: #111214;
+            --panel: #17181b;
+            --panel-2: #1e2024;
+            --border: #2c2e33;
+            --text: #e6e7e9;
+            --text-soft: #a1a6ae;
+            --accent: #3955A2;
+            --accent-hover: #4766bb;
+            --accent-text: #9fb3ea;
+            --log: #d4d7dd;
+            --warn: #e0a63a;
+            --error: #ef6b6b;
+            --info: #7d97e0;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root:not([data-theme="dark"]) {
+                --bg: #eef0f3;
+                --panel: #ffffff;
+                --panel-2: #f4f5f7;
+                --border: #d8dce1;
+                --text: #1f2328;
+                --text-soft: #57606a;
+                --accent-text: #3955A2;
+                --log: #1f2328;
+                --warn: #a86b00;
+                --error: #c43c3c;
+                --info: #3955A2;
+            }
+        }
+
+        :root[data-theme="light"] {
+            --bg: #eef0f3;
+            --panel: #ffffff;
+            --panel-2: #f4f5f7;
+            --border: #d8dce1;
+            --text: #1f2328;
+            --text-soft: #57606a;
+            --accent-text: #3955A2;
+            --log: #1f2328;
+            --warn: #a86b00;
+            --error: #c43c3c;
+            --info: #3955A2;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---------- Üst bar ---------- */
+        .pg-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 8px 14px;
+            background: #0f1115;
+            color: #fff;
+            border-bottom: 3px solid #3955A2;
+        }
+
+        .pg-title { font-weight: 700; font-size: 16px; margin-right: 6px; }
+        .pg-title span { color: #8aa3ea; }
+
+        .pg-back {
+            color: #c9d2ea;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .pg-back:hover { text-decoration: underline; }
+
+        .spacer { flex: 1; }
+
+        .pg-top select,
+        .pg-top button,
+        .pg-top label {
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .pg-top select {
+            background: #1e2024;
+            color: #fff;
+            border: 1px solid #3a3d44;
+            border-radius: 6px;
+            padding: 5px 8px;
+            max-width: 190px;
+        }
+
+        .btn {
+            background: #1e2024;
+            color: #fff;
+            border: 1px solid #3a3d44;
+            border-radius: 6px;
+            padding: 5px 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn:hover { background: #2a2d33; }
+
+        .btn-run {
+            background: var(--accent);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+        .btn-run:hover { background: var(--accent-hover); }
+
+        .auto {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #c9d2ea;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* ---------- Ana alan ---------- */
+        .pg-main {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .pane {
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            align-items: stretch;
+            background: var(--panel-2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-soft);
+            padding: 8px 14px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab:hover { color: var(--text); }
+        .tab.active { color: var(--accent-text); border-bottom-color: var(--accent); }
+        .tab .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-text);
+            margin-left: 6px;
+            vertical-align: middle;
+            opacity: 0;
+        }
+        .tab.filled .dot { opacity: 1; }
+
+        .tabs .hint {
+            margin-left: auto;
+            align-self: center;
+            padding: 0 12px;
+            font-size: 12px;
+            color: var(--text-soft);
+        }
+
+        .editor-wrap {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            background: #212121;
+        }
+
+        .editor-wrap > .CodeMirror,
+        .editor-wrap > textarea {
+            position: absolute;
+            inset: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .editor-wrap .CodeMirror {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        /* CodeMirror yüklenemezse düz textarea */
+        .editor-wrap > textarea {
+            border: none;
+            resize: none;
+            padding: 10px 12px;
+            background: #212121;
+            color: #eeffff;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.55;
+            tab-size: 4;
+            outline: none;
+        }
+
+        .hidden { display: none !important; }
+
+        .out-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--panel-2);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .status { font-weight: 400; font-size: 12px; }
+
+        #preview {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        .console {
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+        }
+
+        .console-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 10px;
+            background: var(--panel-2);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .console-head button {
+            background: transparent;
+            border: none;
+            color: var(--text-soft);
+            font: inherit;
+            cursor: pointer;
+        }
+        .console-head button:hover { color: var(--text); }
+
+        #consoleLog {
+            flex: 1;
+            overflow: auto;
+            padding: 4px 0;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+        }
+
+        .log-line {
+            padding: 2px 10px;
+            border-bottom: 1px solid var(--border);
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--log);
+        }
+        .log-line.warn  { color: var(--warn); }
+        .log-line.error { color: var(--error); }
+        .log-line.info  { color: var(--info); }
+        .log-empty { padding: 4px 10px; color: var(--text-soft); font-style: italic; }
+
+        /* ---------- Gömülü mod (docs.html sağ panel) ---------- */
+        body.embed .pg-top { padding: 6px 10px; border-bottom-width: 1px; gap: 8px; }
+        body.embed .pg-title,
+        body.embed .pg-back,
+        body.embed .full-only { display: none; }
+        body.embed .pg-main {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+            padding: 8px;
+            gap: 8px;
+        }
+        body.embed .console { height: 96px; }
+        body.embed .tabs .hint { display: none; }
+
+        /* ---------- Mobil ---------- */
+        @media (max-width: 800px) {
+            html, body { height: auto; }
+            .pg-main {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: 55vh 70vh;
+            }
+            .tabs .hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="pg-top">
+    <span class="pg-title">Deneme <span>Alanı</span></span>
+    <a class="pg-back" href="docs.html">← Rehbere dön</a>
+    <span class="spacer"></span>
+
+    <select id="template" title="Hazır şablon yükle">
+        <option value="">Şablon yükle…</option>
+        <option value="bos">Boş sayfa (HTML + CSS + JS)</option>
+        <option value="ilk">İlk grafik (line)</option>
+        <option value="turler">Grafik türleri</option>
+        <option value="kart">Koyu kart (sitenin tasarımı)</option>
+        <option value="donut">Donut + responsive</option>
+        <option value="guncelle">Düğmelerle güncelleme</option>
+        <option value="dalga">Ana sayfa dalgası</option>
+    </select>
+
+    <label class="auto" title="Yazdıkça otomatik çalıştır">
+        <input type="checkbox" id="autoRun" checked> Otomatik
+    </label>
+    <button class="btn full-only" id="resetBtn" title="Her şeyi sil">Temizle</button>
+    <button class="btn btn-run" id="runBtn" title="Ctrl + Enter">▶ Çalıştır</button>
+</header>
+
+<div class="pg-main">
+
+    <section class="pane">
+        <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="html">HTML<span class="dot"></span></button>
+            <button class="tab" data-tab="css">CSS<span class="dot"></span></button>
+            <button class="tab" data-tab="js">JavaScript<span class="dot"></span></button>
+            <span class="hint">Ctrl + Enter = Çalıştır</span>
+        </div>
+        <div class="editor-wrap" id="editorWrap">
+            <textarea id="ed-html" spellcheck="false"></textarea>
+            <textarea id="ed-css" spellcheck="false"></textarea>
+            <textarea id="ed-js" spellcheck="false"></textarea>
+        </div>
+    </section>
+
+    <section class="pane">
+        <div class="out-head">
+            <span>Sonuç</span>
+            <span class="status" id="status"></span>
+        </div>
+        <iframe id="preview" title="Sonuç" sandbox="allow-scripts allow-modals"></iframe>
+        <div class="console">
+            <div class="console-head">
+                <span>Konsol</span>
+                <button id="clearConsole" title="Konsolu temizle">Temizle</button>
+            </div>
+            <div id="consoleLog"><div class="log-empty">console.log(...) çıktıları ve hatalar burada görünür.</div></div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/xml-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+
+<script>
+(function () {
+    const APEX_URL = "https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js";
+    const STORE_KEY = "apexPlayground.v1";
+    const isEmbed = new URLSearchParams(location.search).has("embed");
+    if (isEmbed) document.body.classList.add("embed");
+
+    // ======================================================
+    // Şablonlar
+    // ======================================================
+    const TEMPLATES = {
+        bos: {
+            html: '<h1>Merhaba!</h1>\n<p>Burada HTML, CSS ve JavaScript deneyebilirsin.</p>\n<button id="btn">Tıkla</button>',
+            css: 'h1 {\n    color: #3955A2;\n}\n\nbutton {\n    padding: 8px 16px;\n    border-radius: 6px;\n    border: none;\n    background: #3955A2;\n    color: white;\n    cursor: pointer;\n}',
+            js: 'console.log("Merhaba konsol!");\n\ndocument.querySelector("#btn").addEventListener("click", function () {\n    console.log("Düğmeye tıklandı!");\n});'
+        },
+
+        ilk: {
+            html: '<div id="grafik"></div>',
+            css: '',
+            js: 'const ayarlar = {\n    chart: {\n        type: "line",\n        height: 300\n    },\n    series: [{\n        name: "Görev",\n        data: [3, 5, 2, 8, 6, 4, 7]\n    }],\n    xaxis: {\n        categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]\n    }\n};\n\nconst grafik = new ApexCharts(document.querySelector("#grafik"), ayarlar);\ngrafik.render();'
+        },
+
+        turler: {
+            html: '<div class="izgara">\n    <div id="cizgi"></div>\n    <div id="sutun"></div>\n    <div id="pasta"></div>\n    <div id="yuzde"></div>\n</div>',
+            css: '.izgara {\n    display: grid;\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n    gap: 12px;\n}\n\n@media (max-width: 600px) {\n    .izgara { grid-template-columns: 1fr; }\n}',
+            js: 'const gunler = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];\nconst veri = [3, 5, 2, 8, 6, 4, 7];\n\nnew ApexCharts(document.querySelector("#cizgi"), {\n    chart: { type: "line", height: 200 },\n    series: [{ name: "Görev", data: veri }],\n    xaxis: { categories: gunler },\n    stroke: { curve: "smooth" }\n}).render();\n\nnew ApexCharts(document.querySelector("#sutun"), {\n    chart: { type: "bar", height: 200 },\n    series: [{ name: "Görev", data: veri }],\n    xaxis: { categories: gunler },\n    plotOptions: { bar: { borderRadius: 4 } },\n    dataLabels: { enabled: false }\n}).render();\n\nnew ApexCharts(document.querySelector("#pasta"), {\n    chart: { type: "pie", height: 220 },\n    series: [12, 9, 7, 4],\n    labels: ["İş", "Okul", "Ev", "Spor"]\n}).render();\n\nnew ApexCharts(document.querySelector("#yuzde"), {\n    chart: { type: "radialBar", height: 220 },\n    series: [78],\n    labels: ["Tamamlandı"]\n}).render();'
+        },
+
+        kart: {
+            html: '<div class="grafik-kart">\n    <h3>Bu Haftaki Görevler</h3>\n    <p class="alt-yazi">Son 7 gün</p>\n    <div id="kartGrafik"></div>\n</div>',
+            css: 'body {\n    background: #09090b;\n}\n\n.grafik-kart {\n    background-color: var(--bgColor);   /* #1C1B1D */\n    border: 1px solid rgba(255, 255, 255, 0.08);\n    border-radius: 12px;\n    padding: 18px 18px 6px;\n    max-width: 640px;\n    color: white;\n}\n\n.grafik-kart h3 {\n    font-size: 16px;\n    margin: 0 0 4px;\n}\n\n.grafik-kart .alt-yazi {\n    font-size: 13px;\n    color: rgba(255, 255, 255, 0.5);\n    margin: 0;\n}',
+            js: '// CSS değişkenini oku\nconst mavi = getComputedStyle(document.documentElement)\n    .getPropertyValue("--Blue").trim();\n\nnew ApexCharts(document.querySelector("#kartGrafik"), {\n    chart: {\n        type: "bar",\n        height: 220,\n        background: "transparent",\n        foreColor: "rgba(255,255,255,0.5)",\n        toolbar: { show: false }\n    },\n    theme: { mode: "dark" },\n    series: [{ name: "Görev", data: [2, 4, 3, 6, 5, 3, 1] }],\n    xaxis: {\n        categories: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],\n        axisBorder: { show: false },\n        axisTicks: { show: false }\n    },\n    colors: [mavi],\n    plotOptions: { bar: { borderRadius: 5, columnWidth: "45%" } },\n    dataLabels: { enabled: false },\n    grid: { borderColor: "rgba(255,255,255,0.06)", strokeDashArray: 4 }\n}).render();'
+        },
+
+        donut: {
+            html: '<div id="halka"></div>',
+            css: '#halka {\n    max-width: 520px;\n    margin: 0 auto;\n}',
+            js: 'new ApexCharts(document.querySelector("#halka"), {\n    chart: { type: "donut", height: 320 },\n    series: [12, 9, 7, 4],\n    labels: ["İş", "Okul", "Ev", "Spor"],\n    colors: ["#3955A2", "#6f8ad6", "#22c55e", "#e09b20"],\n    legend: { position: "right" },\n    plotOptions: { pie: { donut: { size: "65%" } } },\n\n    // Önizleme penceresini daralt, göstergenin alta indiğini gör\n    responsive: [{\n        breakpoint: 500,\n        options: {\n            chart: { height: 260 },\n            legend: { position: "bottom" }\n        }\n    }]\n}).render();'
+        },
+
+        guncelle: {
+            html: '<button id="rastgele">Rastgele veri</button>\n<button id="renk">Rengi değiştir</button>\n<button id="tur">Sütun / Çizgi</button>\n\n<div id="canli"></div>',
+            css: 'button {\n    background: #3955A2;\n    color: white;\n    border: none;\n    border-radius: 6px;\n    padding: 6px 14px;\n    margin: 0 4px 8px 0;\n    cursor: pointer;\n}',
+            js: 'const canli = new ApexCharts(document.querySelector("#canli"), {\n    chart: { type: "bar", height: 260 },\n    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],\n    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },\n    colors: ["#3955A2"],\n    dataLabels: { enabled: false }\n});\ncanli.render();\n\ndocument.querySelector("#rastgele").addEventListener("click", function () {\n    const yeni = [];\n    for (let i = 0; i < 7; i++) {\n        yeni.push(Math.floor(Math.random() * 10) + 1);\n    }\n    console.log("Yeni veri:", yeni);\n    canli.updateSeries([{ data: yeni }]);\n});\n\nconst renkler = ["#3955A2", "#22c55e", "#e09b20", "#d64545"];\nlet renkNo = 0;\ndocument.querySelector("#renk").addEventListener("click", function () {\n    renkNo = (renkNo + 1) % renkler.length;\n    canli.updateOptions({ colors: [renkler[renkNo]] });\n});\n\nlet sutunMu = true;\ndocument.querySelector("#tur").addEventListener("click", function () {\n    sutunMu = !sutunMu;\n    canli.updateOptions({ chart: { type: sutunMu ? "bar" : "line" } });\n});'
+        },
+
+        dalga: {
+            html: '<div class="sahne">\n    <h1>Day Not</h1>\n    <div id="dalga"></div>\n</div>',
+            css: 'body {\n    margin: 0;\n    padding: 0;\n    background: #09090b;\n}\n\n.sahne {\n    position: relative;\n    height: 100vh;\n    overflow: hidden;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\nh1 {\n    position: relative;\n    z-index: 1;\n    color: white;\n    font-size: 56px;\n    margin: 0;\n}\n\n#dalga {\n    position: absolute;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    height: 50%;\n    pointer-events: none;\n    /* üst ve alt kenarı yumuşat */\n    mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 70%, transparent);\n    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 70%, transparent);\n}',
+            js: 'let faz = 0;\n\nfunction dalgaVerisi() {\n    const katmanlar = [\n        { genlik: 14, frekans: 0.32, kayma: 0.0, seviye: 46 },\n        { genlik: 11, frekans: 0.26, kayma: 1.9, seviye: 36 },\n        { genlik: 8,  frekans: 0.40, kayma: 3.4, seviye: 26 }\n    ];\n    return katmanlar.map(function (k) {\n        const data = [];\n        for (let x = 0; x < 28; x++) {\n            data.push(k.seviye + k.genlik * Math.sin(x * k.frekans + faz + k.kayma));\n        }\n        return { data: data };\n    });\n}\n\nconst dalga = new ApexCharts(document.querySelector("#dalga"), {\n    chart: {\n        type: "area",\n        height: "100%",\n        sparkline: { enabled: true },   // eksenleri gizle\n        animations: {\n            easing: "linear",\n            dynamicAnimation: { speed: 3000 }\n        }\n    },\n    series: dalgaVerisi(),\n    colors: ["#3955A2", "#6f8ad6", "#9fb3ea"],\n    stroke: { curve: "smooth", width: 1.5 },\n    fill: {\n        type: "gradient",\n        gradient: { opacityFrom: [0.45, 0.32, 0.22], opacityTo: 0 }\n    },\n    yaxis: { min: 0, max: 80 },\n    tooltip: { enabled: false }\n});\ndalga.render();\n\nsetInterval(function () {\n    faz += 0.9;\n    dalga.updateSeries(dalgaVerisi());\n}, 3000);'
+        }
+    };
+
+    // ======================================================
+    // Editörler (CodeMirror, yoksa düz textarea)
+    // ======================================================
+    const KEYS = ["html", "css", "js"];
+    const MODES = { html: "htmlmixed", css: "css", js: "javascript" };
+    const editors = {};
+    let activeTab = "html";
+    let suppressChange = false;
+
+    KEYS.forEach(function (k) {
+        const ta = document.getElementById("ed-" + k);
+
+        if (window.CodeMirror) {
+            const cm = CodeMirror.fromTextArea(ta, {
+                mode: MODES[k],
+                theme: "material-darker",
+                lineNumbers: true,
+                tabSize: 4,
+                indentUnit: 4,
+                autoCloseBrackets: true,
+                autoCloseTags: k === "html",
+                extraKeys: {
+                    "Ctrl-Enter": function () { run(); },
+                    "Cmd-Enter": function () { run(); },
+                    "Tab": function (c) {
+                        if (c.somethingSelected()) c.indentSelection("add");
+                        else c.replaceSelection("    ", "end");
+                    },
+                    "Shift-Tab": function (c) { c.indentSelection("subtract"); }
+                }
+            });
+            cm.on("change", onChange);
+            editors[k] = {
+                get: function () { return cm.getValue(); },
+                set: function (v) { cm.setValue(v || ""); cm.clearHistory(); },
+                el: cm.getWrapperElement(),
+                show: function () { cm.refresh(); cm.focus(); }
+            };
+        } else {
+            ta.addEventListener("input", onChange);
+            ta.addEventListener("keydown", function (e) {
+                if (e.key === "Tab") {
+                    e.preventDefault();
+                    const s = ta.selectionStart;
+                    ta.value = ta.value.slice(0, s) + "    " + ta.value.slice(ta.selectionEnd);
+                    ta.selectionStart = ta.selectionEnd = s + 4;
+                    onChange();
+                } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    run();
+                }
+            });
+            editors[k] = {
+                get: function () { return ta.value; },
+                set: function (v) { ta.value = v || ""; },
+                el: ta,
+                show: function () { ta.focus(); }
+            };
+        }
+    });
+
+    function getCode() {
+        return { html: editors.html.get(), css: editors.css.get(), js: editors.js.get() };
+    }
+
+    function setCode(code, firstTab) {
+        suppressChange = true;
+        KEYS.forEach(function (k) { editors[k].set(code[k] || ""); });
+        suppressChange = false;
+        updateDots();
+        save();
+        const tab = firstTab || (code.js && code.js.trim() ? "js" : "html");
+        showTab(tab, false);
+        run();
+    }
+
+    // ---------- Sekmeler ----------
+    const tabs = document.querySelectorAll(".tab");
+
+    function showTab(k, focus) {
+        activeTab = k;
+        tabs.forEach(function (t) { t.classList.toggle("active", t.dataset.tab === k); });
+        KEYS.forEach(function (key) { editors[key].el.classList.toggle("hidden", key !== k); });
+        if (focus !== false) editors[k].show();
+        else if (window.CodeMirror) setTimeout(function () { editors[k].show(); }, 0);
+    }
+
+    tabs.forEach(function (t) {
+        t.addEventListener("click", function () { showTab(t.dataset.tab); });
+    });
+
+    function updateDots() {
+        tabs.forEach(function (t) {
+            t.classList.toggle("filled", editors[t.dataset.tab].get().trim() !== "");
+        });
+    }
+
+    // ======================================================
+    // Önizleme belgesini oluştur
+    // ======================================================
+    const CONSOLE_HOOK =
+        '<script>(function(){' +
+        'function fmt(x){try{if(typeof x==="object"&&x!==null)return JSON.stringify(x);}catch(e){}return String(x);}' +
+        'function send(t,a,line){try{parent.postMessage({__pg:1,type:t,line:line||0,msg:Array.prototype.map.call(a,fmt).join(" ")},"*");}catch(e){}}' +
+        '["log","info","warn","error"].forEach(function(k){var o=console[k];console[k]=function(){send(k,arguments);o.apply(console,arguments);};});' +
+        'window.addEventListener("error",function(e){send("error",[e.message],e.lineno);});' +
+        'window.addEventListener("unhandledrejection",function(e){send("error",["Promise hatası: "+fmt(e.reason)]);});' +
+        '})();<\/script>';
+
+    const BASE_STYLE =
+        '<style>' +
+        ':root{--aColor:#09090b;--bColor:#FFFFFF;--bgColor:#1C1B1D;--secondaryColor:#353437;--Primary:#FFFFFF;--Blue:#3955A2;}' +
+        'body{margin:0;padding:14px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2328;background:#fff;}' +
+        '<\/style>';
+
+    const APEX_TAG = '<script src="' + APEX_URL + '"><\/script>';
+
+    // Kullanıcının JS'inin, oluşturulan belgede kaçıncı satırdan başladığı
+    let jsLineOffset = 0;
+
+    function lineOffsetOf(doc, js) {
+        const marker = "<script>\n" + js;
+        const idx = doc.lastIndexOf(marker);
+        if (idx === -1) return 0;
+        return (doc.slice(0, idx + "<script>\n".length).match(/\n/g) || []).length;
+    }
+
+    function buildDoc(c) {
+        const doc = buildDocInner(c);
+        jsLineOffset = (c.js || "").trim() ? lineOffsetOf(doc, c.js) : 0;
+        return doc;
+    }
+
+    function buildDocInner(c) {
+        let html = c.html || "";
+        const css = c.css || "";
+        const js = c.js || "";
+
+        // JS'te kullanılan ama HTML'de olmayan #id'ler için otomatik <div> oluştur
+        const ids = [];
+        const re = /querySelector\(\s*["']#([\w-]+)["']\s*\)|getElementById\(\s*["']([\w-]+)["']\s*\)/g;
+        let m;
+        while ((m = re.exec(js)) !== null) ids.push(m[1] || m[2]);
+        const autoDivs = Array.from(new Set(ids))
+            .filter(function (id) { return !new RegExp('id\\s*=\\s*["\']' + id + '["\']').test(html); })
+            .map(function (id) { return '<div id="' + id + '"></div>'; })
+            .join("\n");
+
+        const userCss = css.trim() ? "<style>\n" + css + "\n<\/style>" : "";
+        const userJs = js.trim() ? "<script>\n" + js + "\n<\/script>" : "";
+        const hasApex = /apexcharts(\.min)?\.js/i.test(html);
+
+        // Tam bir HTML belgesi yapıştırıldıysa
+        if (/<html[\s>]/i.test(html)) {
+            const headInject = CONSOLE_HOOK + BASE_STYLE + (hasApex ? "" : APEX_TAG);
+            if (/<head[^>]*>/i.test(html)) {
+                html = html.replace(/<head[^>]*>/i, function (s) { return s + headInject; });
+            } else {
+                html = html.replace(/<html[^>]*>/i, function (s) { return s + "<head>" + headInject + "</head>"; });
+            }
+            if (userCss) html = html.replace(/<\/head>/i, userCss + "</head>");
+            const tail = autoDivs + userJs;
+            if (/<\/body>/i.test(html)) {
+                html = html.replace(/<\/body>(?![\s\S]*<\/body>)/i, tail + "</body>");
+            } else {
+                html += tail;
+            }
+            return html;
+        }
+
+        return '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8">' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+            CONSOLE_HOOK + BASE_STYLE + (hasApex ? "" : APEX_TAG) + userCss +
+            '</head><body>\n' + html + '\n' + autoDivs + '\n' + userJs + '\n</body></html>';
+    }
+
+    // ======================================================
+    // Çalıştır
+    // ======================================================
+    const preview = document.getElementById("preview");
+    const statusEl = document.getElementById("status");
+    const logEl = document.getElementById("consoleLog");
+    let logCount = 0;
+
+    function clearConsole() {
+        logEl.innerHTML = '<div class="log-empty">console.log(...) çıktıları ve hatalar burada görünür.</div>';
+        logCount = 0;
+    }
+
+    function addLog(type, msg) {
+        if (logCount === 0) logEl.innerHTML = "";
+        logCount++;
+        if (logCount > 300) logEl.removeChild(logEl.firstChild);
+        const line = document.createElement("div");
+        line.className = "log-line " + type;
+        line.textContent = (type === "error" ? "✖ " : type === "warn" ? "⚠ " : "› ") + msg;
+        logEl.appendChild(line);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function run() {
+        clearConsole();
+        preview.srcdoc = buildDoc(getCode());
+        const now = new Date();
+        statusEl.textContent = "Çalıştırıldı " + now.toLocaleTimeString("tr-TR");
+    }
+
+    window.addEventListener("message", function (e) {
+        const d = e.data || {};
+
+        // Önizlemeden gelen konsol mesajları
+        if (e.source === preview.contentWindow && d.__pg) {
+            let msg = d.msg;
+            if (d.line) {
+                const userLine = d.line - jsLineOffset;
+                msg += (jsLineOffset && userLine >= 1)
+                    ? "  (JavaScript sekmesi, satır " + userLine + ")"
+                    : "  (satır " + d.line + ")";
+            }
+            addLog(d.type, msg);
+            return;
+        }
+
+        // docs.html'den gelen "bu kodu yükle" mesajı
+        if (e.origin === location.origin && d.type === "pg-load" && d.code) {
+            setCode(d.code, d.tab);
+        }
+    });
+
+    // ---------- Otomatik çalıştır ----------
+    const autoRun = document.getElementById("autoRun");
+    let timer = null;
+
+    function onChange() {
+        if (suppressChange) return;
+        updateDots();
+        save();
+        if (autoRun.checked) {
+            clearTimeout(timer);
+            timer = setTimeout(run, 700);
+        }
+    }
+
+    // ---------- Kaydet / yükle (bu tarayıcıda) ----------
+    function save() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(getCode())); } catch (e) {}
+    }
+
+    function load() {
+        try {
+            const raw = localStorage.getItem(STORE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+
+    function decodeHash() {
+        const m = location.hash.match(/^#k=(.+)$/);
+        if (!m) return null;
+        try {
+            const json = decodeURIComponent(escape(atob(decodeURIComponent(m[1]))));
+            return JSON.parse(json);
+        } catch (e) { return null; }
+    }
+
+    // ---------- Düğmeler ----------
+    document.getElementById("runBtn").addEventListener("click", run);
+    document.getElementById("clearConsole").addEventListener("click", clearConsole);
+
+    document.getElementById("resetBtn").addEventListener("click", function () {
+        if (confirm("HTML, CSS ve JavaScript alanlarının hepsi silinsin mi?")) {
+            setCode({ html: "", css: "", js: "" }, "html");
+        }
+    });
+
+    document.getElementById("template").addEventListener("change", function (e) {
+        const t = TEMPLATES[e.target.value];
+        if (t) setCode(t);
+        e.target.value = "";
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+    });
+
+    // ---------- Başlangıç ----------
+    const fromHash = decodeHash();
+    if (fromHash) {
+        setCode(fromHash);
+        try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    } else {
+        setCode(load() || TEMPLATES.ilk);
+    }
+
+    if (isEmbed && window.parent !== window) {
+        window.parent.postMessage({ type: "pg-ready" }, location.origin);
+    }
+})();
+</script>
+
+</body>
+</html>

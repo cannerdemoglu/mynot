@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexCharts Rehberi</title>
+    <meta name="description" content="ApexCharts'ı HTML, CSS, JavaScript ve PHP ile sıfırdan, adım adım öğrenmek için Türkçe rehber.">
+
+    <!-- Kod renklendirme (Prism) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-soft: #f4f5f7;
+            --sidebar: #f1f2f4;
+            --text: #1f2328;
+            --text-soft: #57606a;
+            --border: #d8dce1;
+            --accent: #3955A2;
+            --accent-soft: #e6ebf7;
+            --code-bg: #2d2d2d;
+            --inline-code-bg: #eef0f3;
+            --note-bg: #e8f0fe;  --note-line: #3955A2;
+            --tip-bg: #e7f6ec;   --tip-line: #22a35a;
+            --warn-bg: #fff4e0;  --warn-line: #e09b20;
+            --danger-bg: #fdecec; --danger-line: #d64545;
+            --result-bg: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #111214;
+                --bg-soft: #1a1b1e;
+                --sidebar: #16171a;
+                --text: #e6e7e9;
+                --text-soft: #a1a6ae;
+                --border: #2c2e33;
+                --accent: #7d97e0;
+                --accent-soft: #1d2540;
+                --code-bg: #1e1e1e;
+                --inline-code-bg: #24262b;
+                --note-bg: #17203a;  --note-line: #7d97e0;
+                --tip-bg: #112a1c;   --tip-line: #3fbf73;
+                --warn-bg: #2e2412;  --warn-line: #e0a63a;
+                --danger-bg: #331616; --danger-line: #e66a6a;
+                --result-bg: #18191c;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #111214;
+            --bg-soft: #1a1b1e;
+            --sidebar: #16171a;
+            --text: #e6e7e9;
+            --text-soft: #a1a6ae;
+            --border: #2c2e33;
+            --accent: #7d97e0;
+            --accent-soft: #1d2540;
+            --code-bg: #1e1e1e;
+            --inline-code-bg: #24262b;
+            --note-bg: #17203a;  --note-line: #7d97e0;
+            --tip-bg: #112a1c;   --tip-line: #3fbf73;
+            --warn-bg: #2e2412;  --warn-line: #e0a63a;
+            --danger-bg: #331616; --danger-line: #e66a6a;
+            --result-bg: #18191c;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* ---------- Üst bar ---------- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 20px;
+            background: #0f1115;
+            color: #fff;
+            border-bottom: 3px solid #3955A2;
+        }
+
+        .topbar .logo {
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 0.2px;
+        }
+
+        .topbar .logo span { color: #8aa3ea; }
+
+        .topbar .tag {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #c9d2ea;
+        }
+
+        .menu-btn {
+            display: none;
+            margin-left: auto;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* ---------- Yerleşim ---------- */
+        .layout {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 56px;
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 16px 0 40px;
+        }
+
+        .sidebar h4 {
+            margin: 18px 20px 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-soft);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 6px 20px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 15px;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar a:hover { background: var(--accent-soft); }
+
+        .sidebar a.active {
+            background: var(--accent-soft);
+            border-left-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        main {
+            padding: 30px 48px 80px;
+            max-width: 920px;
+        }
+
+        /* ---------- Tipografi ---------- */
+        h1 { font-size: 38px; line-height: 1.2; margin: 0 0 10px; }
+        h2 {
+            font-size: 30px;
+            margin: 60px 0 14px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        h3 { font-size: 21px; margin: 32px 0 8px; }
+        h2 .num {
+            display: inline-block;
+            min-width: 40px;
+            color: var(--accent);
+        }
+
+        p, li { color: var(--text); }
+        .lead { font-size: 19px; color: var(--text-soft); }
+        a { color: var(--accent); }
+
+        :not(pre) > code {
+            background: var(--inline-code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        /* ---------- Kod kutuları ---------- */
+        .code-box {
+            margin: 16px 0 22px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .code-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: #3b3f46;
+            color: #e4e6ea;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .code-head .file { opacity: 0.75; font-weight: 400; margin-left: 8px; }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            padding: 2px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .code-box pre[class*="language-"] {
+            margin: 0;
+            border-radius: 0;
+            background: var(--code-bg);
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 560px;
+        }
+
+        /* ---------- Sonuç kutusu ---------- */
+        .result {
+            margin: -10px 0 26px;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            background: var(--result-bg);
+            padding: 14px 16px 6px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-soft);
+            margin-bottom: 6px;
+        }
+
+        .code-box.has-result { border-radius: 8px 8px 0 0; margin-bottom: 0; }
+
+        /* ---------- Bilgi kutuları ---------- */
+        .box {
+            margin: 18px 0;
+            padding: 12px 16px;
+            border-left: 5px solid;
+            border-radius: 4px;
+        }
+
+        .box p { margin: 4px 0; }
+        .box strong:first-child { display: block; margin-bottom: 2px; }
+        .note   { background: var(--note-bg);   border-color: var(--note-line); }
+        .tip    { background: var(--tip-bg);    border-color: var(--tip-line); }
+        .warn   { background: var(--warn-bg);   border-color: var(--warn-line); }
+        .danger { background: var(--danger-bg); border-color: var(--danger-line); }
+
+        /* ---------- Tablolar ---------- */
+        .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        th { background: var(--bg-soft); }
+        tr:nth-child(even) td { background: var(--bg-soft); }
+
+        /* ---------- Adım listesi ---------- */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps > li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 44px;
+            margin-bottom: 14px;
+        }
+        .steps > li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ---------- Alıştırmalar ---------- */
+        details {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            background: var(--bg-soft);
+        }
+
+        summary { cursor: pointer; font-weight: 600; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .mini-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px 2px;
+            background: var(--result-bg);
+            min-width: 0;
+        }
+
+        .mini-card h4 { margin: 0; font-size: 15px; }
+
+        .demo-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+
+        .demo-btns button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .demo-btns button:hover { opacity: 0.9; }
+
+        /* Örnek "CSS ile bağlantı" kartı */
+        .ornek-kart {
+            background: #1C1B1D;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 18px 18px 6px;
+            color: #fff;
+        }
+
+        .ornek-kart h3 { margin: 0 0 4px; font-size: 16px; color: #fff; }
+
+        /* ---------- Dene düğmesi ---------- */
+        .code-head .btns { display: flex; gap: 6px; }
+
+        .try-btn {
+            background: #3955A2;
+            color: #fff;
+            border: 1px solid #3955A2;
+            border-radius: 5px;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .try-btn:hover { background: #4766bb; }
+
+        .topbar .pg-link {
+            margin-left: auto;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            background: #3955A2;
+            border-radius: 6px;
+            padding: 5px 12px;
+        }
+
+        .topbar .pg-link:hover { background: #4766bb; }
+
+        /* ---------- Sağ panel: Deneme Alanı ---------- */
+        .try-panel { display: none; }
+
+        @media (min-width: 1300px) {
+            .layout {
+                grid-template-columns: 240px minmax(0, 1fr) minmax(440px, 40vw);
+            }
+
+            .try-panel {
+                display: flex;
+                flex-direction: column;
+                position: sticky;
+                top: 56px;
+                height: calc(100vh - 56px);
+                border-left: 1px solid var(--border);
+                background: var(--sidebar);
+            }
+
+            .try-panel-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 8px 12px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .try-panel-head strong { font-size: 15px; }
+
+            .try-panel-head span {
+                display: block;
+                font-size: 12px;
+                color: var(--text-soft);
+                line-height: 1.3;
+            }
+
+            .try-panel-head a {
+                font-size: 13px;
+                white-space: nowrap;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .try-panel iframe {
+                flex: 1;
+                width: 100%;
+                border: none;
+            }
+
+            main { max-width: none; padding: 30px 36px 80px; }
+
+            .code-box.flash { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow 0.2s; }
+        }
+
+        .footer-note {
+            margin-top: 70px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        /* ---------- Mobil ---------- */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: minmax(0, 1fr); }
+            .menu-btn { display: inline-block; margin-left: 0; }
+            .topbar .tag { display: none; }
+            .topbar .pg-link { font-size: 13px; padding: 4px 10px; }
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 56px;
+                left: 0;
+                right: 0;
+                height: calc(100vh - 56px);
+                z-index: 15;
+            }
+            .sidebar.open { display: block; }
+            main { padding: 20px 16px 60px; }
+            h1 { font-size: 30px; }
+            h2 { font-size: 25px; }
+            .grid-2 { grid-template-columns: minmax(0, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="logo">Apex<span>Charts</span> Rehberi</div>
+    <span class="tag">Türkçe · Başlangıçtan İleriye</span>
+    <a class="pg-link" href="playground.html" target="_blank" rel="noopener">🧪 Deneme Alanı</a>
+    <button class="menu-btn" id="menuBtn">☰ Konular</button>
+</header>
+
+<div class="layout">
+
+    <nav class="sidebar" id="sidebar">
+        <h4>Başlangıç</h4>
+        <a href="#giris">1. ApexCharts Nedir?</a>
+        <a href="#kurulum">2. Kurulum</a>
+        <a href="#ilk-grafik">3. İlk Grafiğin</a>
+        <a href="#ayarlar">4. Ayarlar (options) Yapısı</a>
+
+        <h4>Grafik Türleri</h4>
+        <a href="#turler">5. Grafik Türleri</a>
+
+        <h4>Görünüm</h4>
+        <a href="#gorunum">6. Renk, Çizgi, Etiket</a>
+        <a href="#css">7. CSS ile Bağlantı</a>
+        <a href="#responsive">8. Mobil Uyum</a>
+
+        <h4>Veri</h4>
+        <a href="#guncelleme">9. Grafiği Güncellemek</a>
+        <a href="#php">10. PHP + MySQL Verisi</a>
+        <a href="#ajax">11. AJAX ile Veri Çekmek</a>
+
+        <h4>Pratik</h4>
+        <a href="#proje">12. Projendeki Kod</a>
+        <a href="#hatalar">13. Sık Yapılan Hatalar</a>
+        <a href="#kopya">14. Hızlı Başvuru</a>
+        <a href="#alistirma">15. Alıştırmalar</a>
+        <a href="#kaynaklar">16. Kaynaklar</a>
+    </nav>
+
+    <main>
+
+        <!-- ================================================= -->
+        <h1>ApexCharts Rehberi</h1>
+        <p class="lead">Bu rehberde ApexCharts'ı hiç bilmediğini varsayarak başlıyoruz. HTML'e nasıl eklenir, CSS ile nasıl uyumlu hale gelir, PHP ve MySQL'den gelen veri nasıl grafiğe dönüşür; hepsini adım adım göreceğiz.</p>
+
+        <div class="box note">
+            <strong>Bu sayfa nasıl okunur?</strong>
+            <p>Her bölümde önce açıklama, sonra <b>kod</b>, sonra da kodun <b>canlı sonucu</b> var. Kodları "Kopyala" düğmesiyle alıp kendi dosyanda deneyebilirsin. Soldaki menüden istediğin bölüme atlayabilirsin.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="giris"><span class="num">1.</span>ApexCharts Nedir?</h2>
+
+        <p><b>ApexCharts</b>, web sayfalarına <b>grafik</b> (çizgi, sütun, pasta, halka vb.) eklemeni sağlayan ücretsiz bir <b>JavaScript kütüphanesidir</b>.</p>
+
+        <p>"Kütüphane" demek, başkalarının yazdığı hazır kod demektir. Grafiği sıfırdan çizmek yerine ApexCharts'a "şu verilerle, şu renkte, şu türde bir grafik çiz" dersin, o da senin yerine çizer.</p>
+
+        <h3>Neden ApexCharts?</h3>
+        <ul>
+            <li><b>Kolay:</b> Birkaç satır kodla grafik çıkar.</li>
+            <li><b>Animasyonlu:</b> Grafikler yüklenirken ve güncellenirken yumuşak animasyon yapar.</li>
+            <li><b>Etkileşimli:</b> Fareyle üzerine gelince bilgi kutusu (tooltip) gösterir.</li>
+            <li><b>Mobil uyumlu:</b> Ekran küçülünce kendini ayarlar.</li>
+            <li><b>Ücretsiz:</b> MIT lisanslıdır, ticari projelerde de kullanılabilir.</li>
+        </ul>
+
+        <h3>Hangi dilleri bilmen gerekiyor?</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Dil</th><th>ApexCharts'taki görevi</th></tr>
+                <tr><td><b>HTML</b></td><td>Grafiğin duracağı kutuyu (<code>&lt;div&gt;</code>) oluşturur ve kütüphaneyi sayfaya ekler.</td></tr>
+                <tr><td><b>CSS</b></td><td>Grafiğin etrafındaki kartı, boşlukları, genişliği ayarlar.</td></tr>
+                <tr><td><b>JavaScript</b></td><td>Grafiği oluşturan asıl kısım. Ayarlar ve veriler burada yazılır.</td></tr>
+                <tr><td><b>PHP</b></td><td>Veritabanından veriyi alıp JavaScript'e verir. (İsteğe bağlı)</td></tr>
+            </table>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="kurulum"><span class="num">2.</span>Kurulum</h2>
+
+        <p>ApexCharts'ı kullanmanın en kolay yolu <b>CDN</b>'dir. CDN, dosyayı internetteki bir sunucudan doğrudan sayfana çekmek demek. Hiçbir şey indirmen gerekmez.</p>
+
+        <h3>Yöntem 1: CDN (önerilen)</h3>
+        <p>Sayfana şu tek satırı eklemen yeterli:</p>
+
+        <div class="code-box">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Sürüm numarası neden yazılı?</strong>
+            <p>Adresteki <code>@3.54.1</code> kısmı sürümü sabitler. Sürüm yazmazsan kütüphane güncellendiğinde sitenin görünümü bir gün kendiliğinden değişebilir. Sabit sürüm daha güvenlidir.</p>
+        </div>
+
+        <h3>Bu satırı nereye koymalıyım?</h3>
+        <p>En güvenli yer, <code>&lt;/body&gt;</code> etiketinin hemen önüdür. Böylece önce sayfadaki HTML yüklenir, sonra grafik kodu çalışır.</p>
+
+        <div class="code-box">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="tr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Sayfam&lt;/title&gt;
+    &lt;link rel="stylesheet" href="style.css"&gt;   &lt;!-- CSS burada --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- Sayfa içeriği burada --&gt;
+
+    &lt;!-- 1) Önce kütüphane --&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"&gt;&lt;/script&gt;
+
+    &lt;!-- 2) Sonra senin grafik kodun --&gt;
+    &lt;script src="grafik.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+
+        <div class="box warn">
+            <strong>Dikkat: Sıralama önemli!</strong>
+            <p>Kütüphane satırı, senin grafik kodundan <b>önce</b> gelmeli. Aksi halde tarayıcı <code>ApexCharts is not defined</code> hatası verir, çünkü henüz kütüphaneyi tanımıyordur.</p>
+        </div>
+
+        <h3>Yöntem 2: Dosyayı indirip projeye koymak</h3>
+        <p>İnternet olmadan da çalışsın istiyorsan:</p>
+        <ol class="steps">
+            <li><code>https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js</code> adresini tarayıcıda aç.</li>
+            <li>Sayfaya sağ tıklayıp <b>Farklı Kaydet</b> de ve projende örneğin <code>main/js/apexcharts.min.js</code> olarak kaydet.</li>
+            <li>Script satırını yerel dosyayı gösterecek şekilde değiştir:</li>
+        </ol>
+
+        <div class="code-box">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;script src="main/js/apexcharts.min.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+
+        <h3>Yöntem 3: npm (ileri seviye)</h3>
+        <p>React, Vue gibi araçlar veya bir derleyici (Vite, Webpack) kullanıyorsan:</p>
+        <div class="code-box">
+            <div class="code-head">Terminal <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-bash">npm install apexcharts</code></pre>
+        </div>
+        <p>Senin projen düz PHP olduğu için <b>Yöntem 1 (CDN)</b> en uygunu. Projedeki <code>index.php</code> de bu yöntemi kullanıyor.</p>
+
+        <!-- ================================================= -->
+        <h2 id="ilk-grafik"><span class="num">3.</span>İlk Grafiğin</h2>
+
+        <p>Bir grafik oluşturmak için her zaman <b>3 şey</b> gerekir:</p>
+        <ol class="steps">
+            <li><b>Bir kutu:</b> Grafiğin çizileceği boş bir <code>&lt;div&gt;</code>.</li>
+            <li><b>Ayarlar:</b> Grafiğin türü, verisi, renkleri vb. (bir JavaScript nesnesi).</li>
+            <li><b>Çizim komutu:</b> <code>new ApexCharts(kutu, ayarlar).render()</code></li>
+        </ol>
+
+        <h3>Tam örnek</h3>
+        <p>Aşağıdaki kodu <code>ilk-grafik.html</code> adıyla kaydedip tarayıcıda açarsan grafiği görürsün:</p>
+
+        <div class="code-box has-result">
+            <div class="code-head">HTML + JavaScript<span class="file">ilk-grafik.html</span> <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="tr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;İlk Grafiğim&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- 1) Grafiğin çizileceği kutu --&gt;
+    &lt;div id="grafik"&gt;&lt;/div&gt;
+
+    &lt;script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+        // 2) Ayarlar
+        const ayarlar = {
+            chart: {
+                type: "line",     // grafik türü: çizgi
+                height: 300       // yükseklik (piksel)
+            },
+            series: [{
+                name: "Görev",
+                data: [3, 5, 2, 8, 6, 4, 7]
+            }],
+            xaxis: {
+                categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]
+            }
+        };
+
+        // 3) Grafiği oluştur ve çiz
+        const grafik = new ApexCharts(document.querySelector("#grafik"), ayarlar);
+        grafik.render();
+    &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div id="ex-first"></div>
+        </div>
+
+        <h3>Satır satır ne oldu?</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Kod</th><th>Anlamı</th></tr>
+                <tr><td><code>&lt;div id="grafik"&gt;</code></td><td>Boş bir kutu. ApexCharts grafiği bunun içine çizecek. <code>id</code> sayesinde JavaScript bu kutuyu bulabiliyor.</td></tr>
+                <tr><td><code>const ayarlar = { ... }</code></td><td>Bütün ayarları tutan bir JavaScript <b>nesnesi</b> (object).</td></tr>
+                <tr><td><code>chart.type</code></td><td>Grafik türü. <code>"line"</code> çizgi, <code>"bar"</code> sütun, <code>"pie"</code> pasta vb.</td></tr>
+                <tr><td><code>series</code></td><td>Grafiğin <b>verisi</b>. Bir dizi (array) içinde bir veya daha fazla seri olabilir.</td></tr>
+                <tr><td><code>xaxis.categories</code></td><td>Yatay eksende yazacak etiketler. Sayıları <code>data</code> ile aynı olmalı (burada 7'şer tane).</td></tr>
+                <tr><td><code>document.querySelector("#grafik")</code></td><td>Sayfadaki <code>id="grafik"</code> olan kutuyu bulur.</td></tr>
+                <tr><td><code>new ApexCharts(...)</code></td><td>Grafik nesnesini oluşturur, ama henüz çizmez.</td></tr>
+                <tr><td><code>.render()</code></td><td>Grafiği ekrana çizer.</td></tr>
+            </table>
+        </div>
+
+        <div class="box note">
+            <strong>Not: <code>#</code> işareti ne?</strong>
+            <p>CSS'te olduğu gibi <code>#grafik</code> "id'si grafik olan eleman" demek. Bir class seçmek isteseydin <code>.grafik</code> yazardın.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="ayarlar"><span class="num">4.</span>Ayarlar (options) Yapısı</h2>
+
+        <p>ApexCharts'ta her şey <b>tek bir ayar nesnesiyle</b> kontrol edilir. Bu nesne iç içe "çekmecelerden" oluşur. Her çekmece grafiğin bir bölümünü ayarlar.</p>
+
+        <div class="code-box">
+            <div class="code-head">JavaScript — Genel iskelet <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">const ayarlar = {
+    chart:      { },   // grafiğin kendisi: tür, yükseklik, animasyon, font
+    series:     [ ],   // VERİ
+    xaxis:      { },   // yatay eksen (alt)
+    yaxis:      { },   // dikey eksen (sol)
+    colors:     [ ],   // renkler
+    title:      { },   // başlık
+    stroke:     { },   // çizgi kalınlığı / şekli
+    fill:       { },   // iç dolgu (düz renk, gradyan)
+    dataLabels: { },   // değerlerin grafik üstünde yazması
+    markers:    { },   // çizgideki noktalar
+    grid:       { },   // arka plandaki ızgara çizgileri
+    legend:     { },   // seri isimlerinin listesi (gösterge)
+    tooltip:    { },   // üzerine gelince çıkan kutu
+    plotOptions:{ },   // türe özel ayarlar (bar, pie, radialBar…)
+    responsive: [ ],   // ekran boyutuna göre farklı ayarlar
+    theme:      { }    // açık / koyu tema
+};</code></pre>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Hepsini yazmak zorunda değilsin</strong>
+            <p>Yazmadığın her ayar için ApexCharts kendi varsayılan değerini kullanır. Bir grafik için aslında sadece <code>chart.type</code> ve <code>series</code> yeterlidir.</p>
+        </div>
+
+        <h3>series: Veri nasıl yazılır?</h3>
+        <p><code>series</code> her zaman bir <b>dizi</b>dir (köşeli parantez <code>[ ]</code>). İçinde her seri bir nesnedir:</p>
+
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript — İki seri <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">series: [
+    { name: "Eklenen",    data: [4, 6, 3, 7, 5, 8, 6] },
+    { name: "Tamamlanan", data: [2, 4, 3, 5, 4, 6, 5] }
+]</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div id="ex-two-series"></div>
+        </div>
+
+        <div class="box warn">
+            <strong>Dikkat: Pasta ve halka grafiklerde series farklı!</strong>
+            <p><code>pie</code>, <code>donut</code> ve <code>radialBar</code> türlerinde series <b>düz bir sayı dizisidir</b>, isimler ise <code>labels</code> ile verilir:</p>
+            <p><code>series: [44, 33, 23], labels: ["İş", "Okul", "Ev"]</code></p>
+        </div>
+
+        <h3>Veriyi x-y çiftleri olarak yazmak</h3>
+        <p>Etiketleri ayrı yazmak yerine her noktayı <code>{ x, y }</code> şeklinde de verebilirsin:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">series: [{
+    name: "Görev",
+    data: [
+        { x: "Pzt", y: 3 },
+        { x: "Sal", y: 5 },
+        { x: "Çar", y: 2 }
+    ]
+}]</code></pre>
+        </div>
+
+        <h3>Tarih eksenli veri</h3>
+        <p>Veriler tarihe bağlıysa <code>xaxis.type: "datetime"</code> kullanılır. ApexCharts tarihleri kendisi biçimlendirir:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">xaxis: { type: "datetime" },
+series: [{
+    name: "Görev",
+    data: [
+        { x: "2026-11-01", y: 3 },
+        { x: "2026-11-02", y: 5 },
+        { x: "2026-11-03", y: 2 }
+    ]
+}]</code></pre>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="turler"><span class="num">5.</span>Grafik Türleri</h2>
+
+        <p>Grafik türünü değiştirmek için çoğu zaman sadece <code>chart.type</code> değerini değiştirmen yeter. En çok kullanılanlar:</p>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th><code>type</code></th><th>Görünüm</th><th>Ne zaman kullanılır?</th></tr>
+                <tr><td><code>line</code></td><td>Çizgi</td><td>Zamanla değişim (günlük görev sayısı)</td></tr>
+                <tr><td><code>area</code></td><td>Altı dolu çizgi</td><td>Zamanla değişim, daha "dolu" görünüm</td></tr>
+                <tr><td><code>bar</code></td><td>Sütun / çubuk</td><td>Karşılaştırma (günlere göre görev)</td></tr>
+                <tr><td><code>pie</code></td><td>Pasta</td><td>Bir bütünün parçaları (kategori oranları)</td></tr>
+                <tr><td><code>donut</code></td><td>Ortası boş pasta</td><td>Pasta ile aynı, daha modern görünüm</td></tr>
+                <tr><td><code>radialBar</code></td><td>İlerleme halkası</td><td>Yüzde gösterme (%78 tamamlandı)</td></tr>
+                <tr><td><code>scatter</code>, <code>heatmap</code>, <code>candlestick</code>, <code>radar</code>…</td><td>Diğer</td><td>Daha özel durumlar</td></tr>
+            </table>
+        </div>
+
+        <h3>Line ve Area</h3>
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// Çizgi
+new ApexCharts(document.querySelector("#cizgi"), {
+    chart: { type: "line", height: 220 },
+    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+    stroke: { curve: "smooth" }   // köşeli değil yumuşak çizgi
+}).render();
+
+// Alan
+new ApexCharts(document.querySelector("#alan"), {
+    chart: { type: "area", height: 220 },
+    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+    stroke: { curve: "smooth" },
+    dataLabels: { enabled: false } // noktaların üstündeki sayıları gizle
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div class="grid-2">
+                <div class="mini-card"><h4>line</h4><div id="ex-line"></div></div>
+                <div class="mini-card"><h4>area</h4><div id="ex-area"></div></div>
+            </div>
+            <div style="height:10px"></div>
+        </div>
+
+        <h3>Bar (sütun ve yatay çubuk)</h3>
+        <p>Çubukları yatay yapmak için <code>plotOptions.bar.horizontal: true</code> yazılır:</p>
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// Dikey sütun
+new ApexCharts(document.querySelector("#sutun"), {
+    chart: { type: "bar", height: 220 },
+    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+    plotOptions: {
+        bar: { borderRadius: 4, columnWidth: "50%" }
+    },
+    dataLabels: { enabled: false }
+}).render();
+
+// Yatay çubuk
+new ApexCharts(document.querySelector("#yatay"), {
+    chart: { type: "bar", height: 220 },
+    series: [{ name: "Görev", data: [12, 9, 7, 4] }],
+    xaxis: { categories: ["İş", "Okul", "Ev", "Spor"] },
+    plotOptions: {
+        bar: { horizontal: true, borderRadius: 4 }
+    }
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div class="grid-2">
+                <div class="mini-card"><h4>bar</h4><div id="ex-bar"></div></div>
+                <div class="mini-card"><h4>bar (horizontal)</h4><div id="ex-hbar"></div></div>
+            </div>
+            <div style="height:10px"></div>
+        </div>
+
+        <h3>Pie ve Donut</h3>
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// Pasta
+new ApexCharts(document.querySelector("#pasta"), {
+    chart: { type: "pie", height: 260 },
+    series: [12, 9, 7, 4],                    // DÜZ sayı dizisi
+    labels: ["İş", "Okul", "Ev", "Spor"]      // isimler ayrı
+}).render();
+
+// Halka (donut)
+new ApexCharts(document.querySelector("#halka"), {
+    chart: { type: "donut", height: 260 },
+    series: [12, 9, 7, 4],
+    labels: ["İş", "Okul", "Ev", "Spor"],
+    plotOptions: {
+        pie: { donut: { size: "65%" } }       // ortadaki boşluğun büyüklüğü
+    }
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div class="grid-2">
+                <div class="mini-card"><h4>pie</h4><div id="ex-pie"></div></div>
+                <div class="mini-card"><h4>donut</h4><div id="ex-donut"></div></div>
+            </div>
+            <div style="height:10px"></div>
+        </div>
+
+        <h3>RadialBar (ilerleme halkası)</h3>
+        <p>Yüzde göstermek için idealdir. Değer <b>0 ile 100 arası</b> olmalıdır.</p>
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">new ApexCharts(document.querySelector("#yuzde"), {
+    chart: { type: "radialBar", height: 260 },
+    series: [78],
+    labels: ["Tamamlandı"],
+    plotOptions: {
+        radialBar: {
+            hollow: { size: "60%" },           // iç boşluk
+            dataLabels: {
+                value: {
+                    fontSize: "28px",
+                    formatter: function (deger) { return deger + "%"; }
+                }
+            }
+        }
+    },
+    stroke: { lineCap: "round" }               // uçları yuvarlak
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div id="ex-radial" style="max-width:320px;margin:0 auto;"></div>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Yarım halka</strong>
+            <p><code>plotOptions.radialBar</code> içine <code>startAngle: -90, endAngle: 90</code> yazarsan halka yarım daire olur. Ana sayfadaki "Tamamla, rahatla" kartında bu kullanılıyor.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="gorunum"><span class="num">6.</span>Renk, Çizgi, Etiket</h2>
+
+        <p>Bu bölümde grafiğin görünümünü değiştiren en önemli ayarları göreceğiz. Hepsini tek bir örnekte topladık:</p>
+
+        <div class="code-box has-result">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">new ApexCharts(document.querySelector("#sekilli"), {
+    chart: {
+        type: "area",
+        height: 280,
+        toolbar: { show: false },               // sağ üstteki menüyü gizle
+        fontFamily: "Poppins, sans-serif"       // yazı tipi
+    },
+    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+
+    colors: ["#3955A2"],                        // ana renk
+
+    title: {
+        text: "Haftalık Görevler",
+        style: { fontSize: "16px" }
+    },
+
+    stroke: {
+        curve: "smooth",                        // "straight" | "smooth" | "stepline"
+        width: 3                                // çizgi kalınlığı
+    },
+
+    fill: {
+        type: "gradient",                       // "solid" | "gradient" | "pattern"
+        gradient: {
+            opacityFrom: 0.5,                   // üstte ne kadar dolu
+            opacityTo: 0                        // altta ne kadar şeffaf
+        }
+    },
+
+    markers: { size: 5 },                       // noktalar
+
+    dataLabels: { enabled: false },             // sayı etiketleri kapalı
+
+    grid: {
+        borderColor: "#e0e0e0",
+        strokeDashArray: 4                      // kesikli ızgara
+    },
+
+    tooltip: {
+        y: {
+            formatter: function (deger) { return deger + " görev"; }
+        }
+    }
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div id="ex-style"></div>
+        </div>
+
+        <h3>Ayarların açıklaması</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Ayar</th><th>Ne işe yarar</th><th>Örnek değerler</th></tr>
+                <tr><td><code>colors</code></td><td>Serilerin renkleri (sırayla)</td><td><code>["#3955A2", "#22c55e"]</code></td></tr>
+                <tr><td><code>chart.toolbar.show</code></td><td>İndir / yakınlaştır menüsü</td><td><code>true</code> / <code>false</code></td></tr>
+                <tr><td><code>chart.fontFamily</code></td><td>Grafikteki tüm yazıların fontu</td><td><code>"poppinsRegular, sans-serif"</code></td></tr>
+                <tr><td><code>chart.foreColor</code></td><td>Eksen yazılarının rengi</td><td><code>"#999"</code></td></tr>
+                <tr><td><code>stroke.curve</code></td><td>Çizgi şekli</td><td><code>"smooth"</code>, <code>"straight"</code>, <code>"stepline"</code></td></tr>
+                <tr><td><code>stroke.width</code></td><td>Çizgi kalınlığı</td><td><code>2</code>, <code>3</code></td></tr>
+                <tr><td><code>fill.type</code></td><td>Dolgu şekli</td><td><code>"solid"</code>, <code>"gradient"</code></td></tr>
+                <tr><td><code>fill.opacity</code></td><td>Dolgu şeffaflığı (0–1)</td><td><code>0.3</code></td></tr>
+                <tr><td><code>dataLabels.enabled</code></td><td>Değerleri grafik üstünde yaz</td><td><code>true</code> / <code>false</code></td></tr>
+                <tr><td><code>markers.size</code></td><td>Nokta büyüklüğü (0 = yok)</td><td><code>0</code>, <code>4</code></td></tr>
+                <tr><td><code>legend.position</code></td><td>Seri isimlerinin yeri</td><td><code>"top"</code>, <code>"bottom"</code>, <code>"right"</code></td></tr>
+                <tr><td><code>tooltip.enabled</code></td><td>Üzerine gelince bilgi kutusu</td><td><code>true</code> / <code>false</code></td></tr>
+                <tr><td><code>theme.mode</code></td><td>Açık / koyu tema</td><td><code>"light"</code>, <code>"dark"</code></td></tr>
+                <tr><td><code>yaxis.min / max</code></td><td>Dikey eksenin sınırları</td><td><code>0</code>, <code>100</code></td></tr>
+            </table>
+        </div>
+
+        <h3>formatter nedir?</h3>
+        <p><code>formatter</code>, bir sayının <b>ekranda nasıl yazılacağını</b> belirleyen küçük bir fonksiyondur. Değeri alır, istediğin metni döndürürsün:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// Uzun yazım
+formatter: function (deger) {
+    return deger + " görev";
+}
+
+// Kısa yazım (ok fonksiyonu) — aynı şey
+formatter: deger =&gt; deger + " görev"
+
+// Yüzde
+formatter: deger =&gt; Math.round(deger) + "%"
+
+// Para
+formatter: deger =&gt; deger.toLocaleString("tr-TR") + " ₺"</code></pre>
+        </div>
+
+        <h3>Koyu tema</h3>
+        <p>Senin siten koyu renkli olduğu için bu önemli. Koyu arka planda grafiğin de koyu temada olması gerekir:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">{
+    chart: {
+        type: "area",
+        background: "transparent",          // grafik kendi arka planını çizmesin, CSS'teki görünsün
+        foreColor: "rgba(255,255,255,0.5)"  // eksen yazıları açık renk
+    },
+    theme: { mode: "dark" },                // tooltip vb. koyu olsun
+    grid: { borderColor: "rgba(255,255,255,0.06)" }
+}</code></pre>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="css"><span class="num">7.</span>CSS ile Bağlantı</h2>
+
+        <p>Bu bölüm çok önemli. ApexCharts grafiği <b>JavaScript ile</b> çizer ama grafiğin <b>nerede, ne genişlikte, hangi kartın içinde</b> duracağını <b>CSS</b> belirler.</p>
+
+        <h3>7.1 CSS dosyasını bağlamak</h3>
+        <p>CSS dosyası her zaman <code>&lt;head&gt;</code> içinde <code>&lt;link&gt;</code> ile bağlanır:</p>
+        <div class="code-box">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;link rel="stylesheet" href="main/css/main.css"&gt;
+&lt;/head&gt;</code></pre>
+        </div>
+        <p>Senin projende <code>index.php</code> zaten <code>main/css/main.css</code> dosyasını bu şekilde bağlıyor.</p>
+
+        <h3>7.2 Genişlik ve yükseklik: kim belirler?</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th></th><th>Kim belirler?</th><th>Nasıl?</th></tr>
+                <tr><td><b>Genişlik</b></td><td>CSS (kutunun genişliği)</td><td>Grafik, içinde bulunduğu <code>div</code>'in genişliğinin <b>%100</b>'ünü kaplar. Kutu 500px ise grafik de 500px olur.</td></tr>
+                <tr><td><b>Yükseklik</b></td><td>JavaScript</td><td><code>chart.height: 300</code> ile piksel olarak yazılır.</td></tr>
+            </table>
+        </div>
+
+        <div class="code-box">
+            <div class="code-head">CSS — Genişliği CSS ile sınırlamak <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-css">#grafik {
+    max-width: 600px;    /* grafik en fazla 600px olsun */
+    margin: 0 auto;      /* ortala */
+}</code></pre>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Yüksekliği de CSS'ten vermek</strong>
+            <p>Grafiğin yüksekliğini CSS'ten kontrol etmek istersen JavaScript'te <code>height: "100%"</code> yaz ve kutuya CSS'te bir yükseklik ver. Ana sayfadaki dalgalar böyle yapıldı:</p>
+            <p><code>.hero-waves { height: 42%; }</code> + <code>chart: { height: "100%" }</code></p>
+        </div>
+
+        <h3>7.3 Grafiği bir kartın içine koymak</h3>
+        <p>Grafiğin kendisini değil, <b>etrafındaki kutuyu</b> CSS ile süsleriz. Böylece grafik sitenin tasarımına uyar. Aşağıdaki örnek senin sitenin renkleriyle yapıldı:</p>
+
+        <div class="code-box" data-group="kart">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;div class="grafik-kart"&gt;
+    &lt;h3&gt;Bu Haftaki Görevler&lt;/h3&gt;
+    &lt;p class="alt-yazi"&gt;Son 7 gün&lt;/p&gt;
+    &lt;div id="kartGrafik"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="code-box" data-group="kart">
+            <div class="code-head">CSS<span class="file">main/css/main.css</span> <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-css">.grafik-kart {
+    background-color: var(--bgColor);              /* #1C1B1D */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px 18px 6px;
+    max-width: 640px;
+}
+
+.grafik-kart h3 {
+    font-size: 16px;
+    margin: 0 0 4px;
+}
+
+.grafik-kart .alt-yazi {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}</code></pre>
+        </div>
+
+        <div class="code-box has-result" data-group="kart">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">new ApexCharts(document.querySelector("#kartGrafik"), {
+    chart: {
+        type: "bar",
+        height: 220,
+        background: "transparent",              // kartın rengi görünsün
+        foreColor: "rgba(255,255,255,0.5)",
+        toolbar: { show: false },
+        fontFamily: "poppinsRegular, sans-serif"
+    },
+    theme: { mode: "dark" },
+    series: [{ name: "Görev", data: [2, 4, 3, 6, 5, 3, 1] }],
+    xaxis: {
+        categories: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
+        axisBorder: { show: false },
+        axisTicks: { show: false }
+    },
+    colors: ["#3955A2"],
+    plotOptions: { bar: { borderRadius: 5, columnWidth: "45%" } },
+    dataLabels: { enabled: false },
+    grid: { borderColor: "rgba(255,255,255,0.06)", strokeDashArray: 4 }
+}).render();</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç</div>
+            <div class="ornek-kart">
+                <h3>Bu Haftaki Görevler</h3>
+                <span style="font-size:13px;color:rgba(255,255,255,0.5)">Son 7 gün</span>
+                <div id="ex-card"></div>
+            </div>
+            <div style="height:10px"></div>
+        </div>
+
+        <h3>7.4 CSS değişkenlerini (renkleri) grafikte kullanmak</h3>
+        <p>Senin <code>main.css</code> dosyanda renkler değişken olarak tanımlı:</p>
+        <div class="code-box">
+            <div class="code-head">CSS<span class="file">main/css/main.css</span> <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-css">:root {
+    --bgColor: #1C1B1D;
+    --Blue: #3955A2;
+}</code></pre>
+        </div>
+        <p>ApexCharts CSS değişkenini doğrudan anlamaz (<code>colors: ["var(--Blue)"]</code> <b>çalışmaz</b>). Ama JavaScript ile değişkenin değerini okuyup verebilirsin. Böylece rengi değiştirmek istediğinde sadece CSS'i değiştirmen yeter:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// CSS'teki --Blue değişkenini oku
+const stil = getComputedStyle(document.documentElement);
+const mavi = stil.getPropertyValue("--Blue").trim();   // "#3955A2"
+
+new ApexCharts(document.querySelector("#grafik"), {
+    chart: { type: "line", height: 250 },
+    colors: [mavi],                                     // CSS'ten gelen renk
+    series: [{ name: "Görev", data: [3, 5, 2, 8] }]
+}).render();</code></pre>
+        </div>
+
+        <h3>7.5 ApexCharts'ın kendi parçalarını CSS ile değiştirmek</h3>
+        <p>ApexCharts çizdiği her parçaya bir <b>class</b> verir. Bu class'ları CSS'te hedefleyerek ince ayar yapabilirsin. Bazen <code>!important</code> gerekir, çünkü ApexCharts bazı stilleri doğrudan elemanın üzerine yazar.</p>
+        <div class="code-box">
+            <div class="code-head">CSS <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-css">/* Tooltip (üzerine gelince çıkan kutu) */
+.apexcharts-tooltip {
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Gösterge (legend) yazıları */
+.apexcharts-legend-text {
+    font-size: 13px !important;
+}
+
+/* Eksen yazıları */
+.apexcharts-xaxis-label,
+.apexcharts-yaxis-label {
+    font-family: poppinsRegular, sans-serif;
+}</code></pre>
+        </div>
+        <div class="box note">
+            <strong>Not: Class isimlerini nereden bulurum?</strong>
+            <p>Tarayıcıda grafiğe sağ tıklayıp <b>İncele</b> (Inspect) dersen grafiğin içindeki tüm parçaları ve class isimlerini görürsün. Hepsi <code>apexcharts-</code> ile başlar.</p>
+        </div>
+
+        <h3>7.6 Birden fazla grafiği yan yana dizmek (CSS Grid)</h3>
+        <div class="code-box">
+            <div class="code-head">HTML <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;div class="grafik-izgara"&gt;
+    &lt;div class="grafik-kart"&gt;&lt;div id="grafik1"&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class="grafik-kart"&gt;&lt;div id="grafik2"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-box">
+            <div class="code-head">CSS <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-css">.grafik-izgara {
+    display: grid;
+    grid-template-columns: 2fr 1fr;    /* sol geniş, sağ dar */
+    gap: 16px;
+}
+
+.grafik-izgara .grafik-kart {
+    min-width: 0;                      /* ÖNEMLİ! aşağıdaki uyarıya bak */
+}
+
+@media (max-width: 768px) {
+    .grafik-izgara {
+        grid-template-columns: 1fr;    /* telefonda alt alta */
+    }
+}</code></pre>
+        </div>
+        <div class="box warn">
+            <strong>Dikkat: <code>min-width: 0</code> unutulursa</strong>
+            <p>Grid veya flex içindeki grafik, pencere küçülünce <b>küçülmeyi reddedebilir</b> ve sayfanın sağa taşmasına (yatay kaydırma) yol açar. Grafiği saran kutuya <code>min-width: 0</code> vermek bu sorunu çözer.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="responsive"><span class="num">8.</span>Mobil Uyum (responsive)</h2>
+
+        <p>Genişlik zaten CSS'e göre otomatik ayarlanır. Ama bazen telefonda <b>farklı ayarlar</b> istersin: daha kısa grafik, alta alınmış gösterge vb. Bunun için <code>responsive</code> ayarı vardır:</p>
+
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">{
+    chart: { type: "donut", height: 320 },
+    series: [12, 9, 7, 4],
+    labels: ["İş", "Okul", "Ev", "Spor"],
+    legend: { position: "right" },          // büyük ekranda sağda
+
+    responsive: [{
+        breakpoint: 768,                    // ekran 768px'den KÜÇÜKSE…
+        options: {
+            chart:  { height: 260 },        // …daha kısa ol
+            legend: { position: "bottom" }  // …göstergeyi alta al
+        }
+    }]
+}</code></pre>
+        </div>
+
+        <div class="box note">
+            <strong>Not</strong>
+            <p><code>breakpoint</code>, CSS'teki <code>@media (max-width: 768px)</code> ile aynı mantıktadır.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="guncelleme"><span class="num">9.</span>Grafiği Güncellemek</h2>
+
+        <p>Grafik bir kez çizildikten sonra verisini veya ayarlarını değiştirebilirsin. Bunun için grafiği bir <b>değişkende saklaman</b> gerekir:</p>
+
+        <div class="code-box" data-try="no">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">// Değişkende sakla
+const grafik = new ApexCharts(document.querySelector("#grafik"), ayarlar);
+grafik.render();
+
+// Sonra istediğin zaman:
+grafik.updateSeries([{ data: [9, 2, 7, 4, 6, 3, 8] }]);   // sadece veriyi değiştir
+grafik.updateOptions({ colors: ["#22c55e"] });             // ayarı değiştir
+grafik.appendData([{ data: [5] }]);                        // sona veri ekle
+grafik.destroy();                                          // grafiği tamamen sil</code></pre>
+        </div>
+
+        <h3>Canlı örnek: düğmelerle güncelleme</h3>
+        <div class="code-box has-result">
+            <div class="code-head">HTML + JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;button id="rastgele"&gt;Rastgele veri&lt;/button&gt;
+&lt;button id="renk"&gt;Rengi değiştir&lt;/button&gt;
+&lt;button id="tur"&gt;Sütun / Çizgi&lt;/button&gt;
+
+&lt;div id="canli"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    const canli = new ApexCharts(document.querySelector("#canli"), {
+        chart: { type: "bar", height: 260 },
+        series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+        xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+        colors: ["#3955A2"],
+        dataLabels: { enabled: false }
+    });
+    canli.render();
+
+    // 1) Rastgele veri
+    document.querySelector("#rastgele").addEventListener("click", function () {
+        const yeni = [];
+        for (let i = 0; i &lt; 7; i++) {
+            yeni.push(Math.floor(Math.random() * 10) + 1);
+        }
+        canli.updateSeries([{ data: yeni }]);
+    });
+
+    // 2) Renk
+    const renkler = ["#3955A2", "#22c55e", "#e09b20", "#d64545"];
+    let renkNo = 0;
+    document.querySelector("#renk").addEventListener("click", function () {
+        renkNo = (renkNo + 1) % renkler.length;
+        canli.updateOptions({ colors: [renkler[renkNo]] });
+    });
+
+    // 3) Tür
+    let sutunMu = true;
+    document.querySelector("#tur").addEventListener("click", function () {
+        sutunMu = !sutunMu;
+        canli.updateOptions({ chart: { type: sutunMu ? "bar" : "line" } });
+    });
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="result">
+            <div class="result-label">Sonuç — düğmelere tıkla</div>
+            <div class="demo-btns">
+                <button id="d-rastgele">Rastgele veri</button>
+                <button id="d-renk">Rengi değiştir</button>
+                <button id="d-tur">Sütun / Çizgi</button>
+            </div>
+            <div id="ex-live"></div>
+        </div>
+
+        <h3>Belirli aralıklarla otomatik güncelleme</h3>
+        <p><code>setInterval</code> ile grafiği her X milisaniyede bir güncelleyebilirsin. Ana sayfadaki dalgalar bu yöntemle akıyor:</p>
+        <div class="code-box">
+            <div class="code-head">JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-javascript">setInterval(function () {
+    if (document.hidden) return;        // sekme açık değilse boşuna çalışma
+    grafik.updateSeries([{ data: yeniVeriUret() }]);
+}, 3000);                               // 3000 ms = 3 saniye</code></pre>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="php"><span class="num">10.</span>PHP + MySQL Verisi</h2>
+
+        <p>Şimdiye kadar verileri elle yazdık (<code>[3, 5, 2, 8]</code>). Gerçek bir sitede veriler <b>veritabanından</b> gelir. Bu bölümde senin projendeki <code>tasks</code> tablosundan grafik yapacağız.</p>
+
+        <div class="box note">
+            <strong>Temel fikir</strong>
+            <p>PHP sunucuda çalışır, JavaScript tarayıcıda. PHP veriyi veritabanından alır, <b>JavaScript'in anlayacağı biçime (JSON)</b> çevirir ve sayfaya yazar. JavaScript de bu veriyi ApexCharts'a verir.</p>
+            <p><b>MySQL → PHP dizisi → <code>json_encode</code> → JavaScript dizisi → ApexCharts</b></p>
+        </div>
+
+        <h3>Senin tablon</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Sütun</th><th>Tür</th><th>Açıklama</th></tr>
+                <tr><td><code>taskID</code></td><td>int</td><td>Görev numarası</td></tr>
+                <tr><td><code>uID</code></td><td>int</td><td>Görevi ekleyen kullanıcı</td></tr>
+                <tr><td><code>task</code></td><td>varchar</td><td>Görev metni</td></tr>
+                <tr><td><code>isCompleted</code></td><td>tinyint</td><td>0 = bekliyor, 1 = tamamlandı</td></tr>
+                <tr><td><code>createdAt</code></td><td>datetime</td><td>Eklenme zamanı</td></tr>
+            </table>
+        </div>
+
+        <h3>Adım 1: Veritabanına bağlan</h3>
+        <p>Projende bu iş zaten <code>config.php</code> içinde yapılıyor. Sadece dahil etmen yeter:</p>
+        <div class="code-box">
+            <div class="code-head">PHP <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+include("config.php");   // $conn değişkeni artık hazır
+?&gt;</code></pre>
+        </div>
+
+        <h3>Adım 2: SQL sorgusu yaz</h3>
+        <p>Her gün kaç görev eklendiğini bulalım. <code>DATE()</code> saati atıp sadece günü alır, <code>COUNT(*)</code> sayar, <code>GROUP BY</code> günlere göre gruplar:</p>
+        <div class="code-box">
+            <div class="code-head">SQL <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-sql">SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+FROM tasks
+GROUP BY DATE(createdAt)
+ORDER BY gun;</code></pre>
+        </div>
+        <p>Bu sorgunun sonucu şuna benzer:</p>
+        <div class="table-wrap">
+            <table>
+                <tr><th>gun</th><th>adet</th></tr>
+                <tr><td>2026-11-01</td><td>3</td></tr>
+                <tr><td>2026-11-02</td><td>5</td></tr>
+                <tr><td>2026-11-04</td><td>2</td></tr>
+            </table>
+        </div>
+
+        <h3>Adım 3: Sonucu PHP dizilerine aktar</h3>
+        <div class="code-box">
+            <div class="code-head">PHP <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+include("config.php");
+
+$sonuc = $conn-&gt;query(
+    "SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+     FROM tasks
+     GROUP BY DATE(createdAt)
+     ORDER BY gun"
+);
+
+$gunler  = [];   // x ekseni
+$adetler = [];   // y değerleri
+
+while ($satir = $sonuc-&gt;fetch_assoc()) {
+    $gunler[]  = $satir["gun"];
+    $adetler[] = (int) $satir["adet"];   // (int) ÖNEMLİ, aşağıya bak
+}
+?&gt;</code></pre>
+        </div>
+
+        <div class="box warn">
+            <strong>Dikkat: Neden <code>(int)</code>?</strong>
+            <p>MySQL'den gelen sayılar PHP'ye <b>metin</b> olarak gelir (<code>"5"</code>). <code>(int)</code> yazmazsan JavaScript'e <code>["3","5","2"]</code> gibi tırnaklı gider. ApexCharts çoğu zaman yine çizer ama bazı hesaplamalar (toplam, ortalama, eksen) yanlış çıkabilir. Sayıyı her zaman sayıya çevir.</p>
+        </div>
+
+        <h3>Adım 4: PHP dizisini JavaScript'e aktar (<code>json_encode</code>)</h3>
+        <p><code>json_encode</code>, PHP dizisini JavaScript'in okuyabileceği metne çevirir:</p>
+        <div class="table-wrap">
+            <table>
+                <tr><th>PHP'de</th><th><code>json_encode</code> sonrası (JavaScript'te)</th></tr>
+                <tr><td><code>[3, 5, 2]</code></td><td><code>[3,5,2]</code></td></tr>
+                <tr><td><code>["2026-11-01", "2026-11-02"]</code></td><td><code>["2026-11-01","2026-11-02"]</code></td></tr>
+                <tr><td><code>["toplam" =&gt; 15, "biten" =&gt; 4]</code></td><td><code>{"toplam":15,"biten":4}</code></td></tr>
+            </table>
+        </div>
+
+        <h3>Adım 5: Hepsi bir arada</h3>
+        <p>İşte tam, çalışan bir sayfa. <code>htdocs</code> içine <code>grafik.php</code> olarak kaydedip <code>http://localhost/grafik.php</code> adresinden açabilirsin:</p>
+        <div class="code-box">
+            <div class="code-head">PHP + HTML + JavaScript<span class="file">grafik.php</span> <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+include("config.php");
+
+$sonuc = $conn-&gt;query(
+    "SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+     FROM tasks
+     GROUP BY DATE(createdAt)
+     ORDER BY gun"
+);
+
+$gunler  = [];
+$adetler = [];
+
+while ($satir = $sonuc-&gt;fetch_assoc()) {
+    $gunler[]  = $satir["gun"];
+    $adetler[] = (int) $satir["adet"];
+}
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="tr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Görev Grafiği&lt;/title&gt;
+    &lt;link rel="stylesheet" href="main/css/main.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;div class="grafik-kart"&gt;
+        &lt;h3&gt;Günlük Eklenen Görevler&lt;/h3&gt;
+        &lt;div id="gorevGrafik"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+        // PHP'den gelen veriler
+        const gunler  = &lt;?= json_encode($gunler) ?&gt;;
+        const adetler = &lt;?= json_encode($adetler) ?&gt;;
+
+        new ApexCharts(document.querySelector("#gorevGrafik"), {
+            chart: {
+                type: "area",
+                height: 280,
+                background: "transparent",
+                foreColor: "rgba(255,255,255,0.5)",
+                toolbar: { show: false }
+            },
+            theme: { mode: "dark" },
+            series: [{ name: "Görev", data: adetler }],
+            xaxis: { categories: gunler },
+            colors: ["#3955A2"],
+            stroke: { curve: "smooth" },
+            dataLabels: { enabled: false }
+        }).render();
+    &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+
+        <div class="box note">
+            <strong>Not: <code>&lt;?= ... ?&gt;</code> ne demek?</strong>
+            <p><code>&lt;?= $x ?&gt;</code>, <code>&lt;?php echo $x; ?&gt;</code> ifadesinin kısa yazımıdır. PHP çalıştıktan sonra tarayıcıya giden kod şöyle görünür:</p>
+            <p><code>const adetler = [3,5,2];</code></p>
+            <p>Tarayıcıda sayfaya sağ tıklayıp <b>Sayfa kaynağını görüntüle</b> dersen bunu kendin de görebilirsin.</p>
+        </div>
+
+        <h3>Adım 6: Boş günleri 0 ile doldurmak</h3>
+        <p>Yukarıdaki sorguda hiç görev eklenmeyen günler <b>hiç gelmez</b> (örnekte 3 Kasım yok). Grafik bu günü atlar ve yanıltıcı olur. Çözüm: PHP'de son X günün hepsini 0 olarak hazırlayıp, gelen verilerle doldurmak:</p>
+        <div class="code-box">
+            <div class="code-head">PHP <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+include("config.php");
+
+$gunSayisi = 7;
+
+// 1) Son 7 günü 0 değeriyle hazırla
+$veri = [];
+for ($i = $gunSayisi - 1; $i &gt;= 0; $i--) {
+    $tarih = date("Y-m-d", strtotime("-$i day"));   // örn: 2026-11-03
+    $veri[$tarih] = 0;
+}
+
+// 2) Veritabanından sadece son 7 günü çek
+$sonuc = $conn-&gt;query(
+    "SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+     FROM tasks
+     WHERE createdAt &gt;= CURDATE() - INTERVAL 6 DAY
+     GROUP BY DATE(createdAt)"
+);
+
+// 3) Gelen günlerin üzerine yaz
+while ($satir = $sonuc-&gt;fetch_assoc()) {
+    $veri[$satir["gun"]] = (int) $satir["adet"];
+}
+
+// 4) Grafik için ayır
+$gunler  = array_keys($veri);     // ["2026-11-03", "2026-11-04", ...]
+$adetler = array_values($veri);   // [0, 2, 5, 0, 1, 3, 4]
+?&gt;</code></pre>
+        </div>
+
+        <h3>Adım 7: Sadece giriş yapan kullanıcının verisi</h3>
+        <p>Her kullanıcı kendi grafiğini görsün istiyorsan, <code>task.php</code>'de olduğu gibi oturumdaki kullanıcı numarasını kullanırsın. Kullanıcıdan gelen değerler sorguya <b>her zaman prepared statement ile</b> eklenmelidir:</p>
+        <div class="code-box">
+            <div class="code-head">PHP <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+session_start();
+include("config.php");
+
+if (!isset($_SESSION["u_ID"])) {
+    header("Location: login.php");
+    exit;
+}
+
+$userID = $_SESSION["u_ID"];
+
+$stmt = $conn-&gt;prepare(
+    "SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+     FROM tasks
+     WHERE uID = ?
+     GROUP BY DATE(createdAt)
+     ORDER BY gun"
+);
+$stmt-&gt;bind_param("i", $userID);     // "i" = integer (tam sayı)
+$stmt-&gt;execute();
+$sonuc = $stmt-&gt;get_result();
+
+$gunler  = [];
+$adetler = [];
+while ($satir = $sonuc-&gt;fetch_assoc()) {
+    $gunler[]  = $satir["gun"];
+    $adetler[] = (int) $satir["adet"];
+}
+?&gt;</code></pre>
+        </div>
+
+        <div class="box danger">
+            <strong>Güvenlik: SQL Injection</strong>
+            <p>Sorgunun içine değişkeni doğrudan yazmak (<code>"... WHERE uID = $userID"</code>) tehlikelidir. Kötü niyetli biri veritabanına zarar verebilir. Değişkenleri her zaman <code>?</code> ve <code>bind_param</code> ile ekle.</p>
+        </div>
+
+        <h3>Adım 8: Tamamlanma oranı (radialBar) örneği</h3>
+        <div class="code-box">
+            <div class="code-head">PHP + JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+$stmt = $conn-&gt;prepare(
+    "SELECT COUNT(*) AS toplam, COALESCE(SUM(isCompleted), 0) AS biten
+     FROM tasks WHERE uID = ?"
+);
+$stmt-&gt;bind_param("i", $userID);
+$stmt-&gt;execute();
+$s = $stmt-&gt;get_result()-&gt;fetch_assoc();
+
+$toplam = (int) $s["toplam"];
+$biten  = (int) $s["biten"];
+$oran   = $toplam &gt; 0 ? round($biten / $toplam * 100) : 0;   // 0'a bölme hatasını önle
+?&gt;
+
+&lt;div id="oranGrafik"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    new ApexCharts(document.querySelector("#oranGrafik"), {
+        chart: { type: "radialBar", height: 260 },
+        series: [&lt;?= $oran ?&gt;],
+        labels: ["Tamamlandı"],
+        colors: ["#3955A2"]
+    }).render();
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <h3>Metin içeren veriler ve güvenlik</h3>
+        <p>Görev isimleri gibi <b>kullanıcının yazdığı metinleri</b> JavaScript'e aktarırken <code>json_encode</code>'a şu bayrakları ekle. Böylece biri görev adına <code>&lt;/script&gt;</code> yazsa bile sayfan bozulmaz, Türkçe karakterler de okunaklı kalır:</p>
+        <div class="code-box">
+            <div class="code-head">PHP <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">const isimler = &lt;?= json_encode($isimler, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?&gt;;</code></pre>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="ajax"><span class="num">11.</span>AJAX ile Veri Çekmek</h2>
+
+        <p>Önceki bölümde veri, sayfa yüklenirken PHP tarafından sayfaya gömüldü. Diğer yol: sayfa açıldıktan sonra JavaScript'in <b>ayrı bir PHP dosyasından</b> veriyi istemesi. Buna <b>AJAX</b> denir. Projendeki <code>task_system.js</code> dosyası da görev tamamlarken bu yöntemi (<code>fetch</code>) kullanıyor.</p>
+
+        <h3>Ne zaman AJAX?</h3>
+        <ul>
+            <li>Sayfa yenilenmeden grafiğin güncellenmesini istiyorsan.</li>
+            <li>"Son 7 gün / Son 30 gün" gibi filtre düğmeleri yapacaksan.</li>
+            <li>Kullanıcı görev tamamlayınca grafik anında değişsin istiyorsan.</li>
+        </ul>
+
+        <h3>Adım 1: Sadece JSON döndüren PHP dosyası</h3>
+        <div class="code-box">
+            <div class="code-head">PHP<span class="file">system/chart_data.php</span> <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-php">&lt;?php
+session_start();
+include("../config.php");
+
+header("Content-Type: application/json; charset=utf-8");   // "JSON gönderiyorum" de
+
+if (!isset($_SESSION["u_ID"])) {
+    http_response_code(401);
+    echo json_encode(["hata" =&gt; "Giriş yapılmamış"]);
+    exit;
+}
+
+$userID = $_SESSION["u_ID"];
+$gun    = isset($_GET["gun"]) ? (int) $_GET["gun"] : 7;     // ?gun=30 gibi
+$gun    = max(1, min($gun, 90));                           // 1 ile 90 arasında tut
+
+$veri = [];
+for ($i = $gun - 1; $i &gt;= 0; $i--) {
+    $veri[date("Y-m-d", strtotime("-$i day"))] = 0;
+}
+
+$aralik = $gun - 1;
+$stmt = $conn-&gt;prepare(
+    "SELECT DATE(createdAt) AS gun, COUNT(*) AS adet
+     FROM tasks
+     WHERE uID = ? AND createdAt &gt;= CURDATE() - INTERVAL ? DAY
+     GROUP BY DATE(createdAt)"
+);
+$stmt-&gt;bind_param("ii", $userID, $aralik);
+$stmt-&gt;execute();
+$sonuc = $stmt-&gt;get_result();
+
+while ($satir = $sonuc-&gt;fetch_assoc()) {
+    if (isset($veri[$satir["gun"]])) {
+        $veri[$satir["gun"]] = (int) $satir["adet"];
+    }
+}
+
+echo json_encode([
+    "gunler"  =&gt; array_keys($veri),
+    "adetler" =&gt; array_values($veri)
+]);</code></pre>
+        </div>
+        <p>Giriş yapmışken tarayıcıda <code>http://localhost/system/chart_data.php?gun=7</code> adresini açarsan şuna benzer bir çıktı görürsün:</p>
+        <div class="code-box">
+            <div class="code-head">JSON çıktısı</div>
+            <pre><code class="language-json">{"gunler":["2026-11-03","2026-11-04","2026-11-05","2026-11-06","2026-11-07","2026-11-08","2026-11-09"],"adetler":[0,2,5,0,1,3,4]}</code></pre>
+        </div>
+
+        <h3>Adım 2: JavaScript ile çek ve çiz</h3>
+        <div class="code-box">
+            <div class="code-head">HTML + JavaScript <button class="copy-btn">Kopyala</button></div>
+            <pre><code class="language-markup">&lt;button class="filtre" data-gun="7"&gt;7 gün&lt;/button&gt;
+&lt;button class="filtre" data-gun="30"&gt;30 gün&lt;/button&gt;
+
+&lt;div id="ajaxGrafik"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    // 1) Önce BOŞ bir grafik çiz
+    const grafik = new ApexCharts(document.querySelector("#ajaxGrafik"), {
+        chart: { type: "area", height: 280 },
+        series: [{ name: "Görev", data: [] }],
+        xaxis: { type: "datetime" },
+        noData: { text: "Yükleniyor..." },          // veri gelene kadar bu yazar
+        dataLabels: { enabled: false }
+    });
+    grafik.render();
+
+    // 2) Veriyi çeken fonksiyon
+    async function veriGetir(gun) {
+        try {
+            const cevap = await fetch("system/chart_data.php?gun=" + gun);
+            if (!cevap.ok) throw new Error("Sunucu hatası: " + cevap.status);
+
+            const json = await cevap.json();
+
+            // gunler + adetler dizilerini {x, y} çiftlerine çevir
+            const noktalar = json.gunler.map(function (tarih, i) {
+                return { x: tarih, y: json.adetler[i] };
+            });
+
+            grafik.updateSeries([{ name: "Görev", data: noktalar }]);
+        } catch (hata) {
+            console.error(hata);
+            grafik.updateOptions({ noData: { text: "Veri alınamadı" } });
+        }
+    }
+
+    // 3) Sayfa açılınca 7 günü getir
+    veriGetir(7);
+
+    // 4) Düğmelere tıklanınca
+    document.querySelectorAll(".filtre").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            veriGetir(btn.dataset.gun);
+        });
+    });
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Görev tamamlanınca grafiği yenilemek</strong>
+            <p><code>task_system.js</code> içinde görev başarıyla tamamlandığında (<code>result.trim() === "success"</code> kısmı) <code>veriGetir(7)</code> fonksiyonunu çağırırsan grafik sayfa yenilenmeden güncellenir.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="proje"><span class="num">12.</span>Projendeki Kodu Okumak</h2>
+
+        <p>Ana sayfadaki (<code>index.php</code>) grafikler bu rehberde öğrendiğin şeylerin birleşimi. Parça parça bakalım:</p>
+
+        <h3>12.1 Arka plan dalgaları</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Kod</th><th>Ne yapıyor?</th></tr>
+                <tr><td><code>type: "area"</code></td><td>Altı dolu çizgi grafiği.</td></tr>
+                <tr><td><code>sparkline: { enabled: true }</code></td><td>Eksenleri, ızgarayı, yazıları <b>tamamen gizler</b>. Grafik sadece şekil olarak kalır, süs için ideal.</td></tr>
+                <tr><td><code>height: "100%"</code></td><td>Yüksekliği CSS'teki <code>.hero-waves</code> kutusundan alır.</td></tr>
+                <tr><td>3 seri</td><td>Üst üste binen üç dalga katmanı.</td></tr>
+                <tr><td><code>Math.sin(...)</code></td><td>Dalga şeklini sinüs fonksiyonuyla üretir.</td></tr>
+                <tr><td><code>setInterval</code> + <code>updateSeries</code></td><td>Her 3 saniyede dalgayı biraz kaydırıp yeniden çizer; animasyon "akıyormuş" gibi görünür.</td></tr>
+                <tr><td><code>dynamicAnimation.speed: 3000</code></td><td>Geçiş animasyonu da 3 saniye sürer, böylece hiç durmadan akar.</td></tr>
+                <tr><td><code>mask-image</code> (CSS)</td><td>Dalgaların üst ve alt kenarını yumuşakça şeffaflaştırır.</td></tr>
+                <tr><td><code>pointer-events: none</code> (CSS)</td><td>Dalgalar fare tıklamalarını engellemez, butonlar çalışmaya devam eder.</td></tr>
+            </table>
+        </div>
+
+        <h3>12.2 "Bu hafta" önizleme kartı</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Kod</th><th>Ne yapıyor?</th></tr>
+                <tr><td><code>type: "bar"</code> + <code>distributed: true</code></td><td>Her sütunun <b>ayrı renk</b> alabilmesini sağlar.</td></tr>
+                <tr><td><code>colors: week.map(...)</code></td><td>Bugünün sütununu açık mavi, diğerlerini koyu mavi yapar.</td></tr>
+                <tr><td><code>(new Date().getDay() + 6) % 7</code></td><td>JavaScript'te Pazar = 0'dır; bu hesap Pazartesi'yi 0 yapar.</td></tr>
+                <tr><td><code>type: "radialBar"</code>, <code>series: [78]</code></td><td>%78 ilerleme halkası.</td></tr>
+                <tr><td><code>fill.gradient.gradientToColors</code></td><td>Halkanın rengi koyu maviden açık maviye geçer.</td></tr>
+                <tr><td><code>@keyframes previewFloat</code> (CSS)</td><td>Kartın yavaşça yukarı-aşağı süzülmesi.</td></tr>
+            </table>
+        </div>
+
+        <h3>12.3 Özellik kartlarındaki mini grafikler</h3>
+        <p>Üçü de <code>sparkline</code> modunda, sadece süs amaçlı: biri sütun (<code>bar</code>), biri alan (<code>area</code>), biri <code>startAngle: -90, endAngle: 90</code> ile yarım halka (<code>radialBar</code>).</p>
+
+        <h3>12.4 Erişilebilirlik ve performans detayları</h3>
+        <ul>
+            <li><code>prefers-reduced-motion</code>: Kullanıcı cihazında "hareketi azalt" ayarını açtıysa animasyonlar kapatılır.</li>
+            <li><code>document.hidden</code>: Sekme arka plandayken güncelleme yapılmaz, işlemci boşuna yorulmaz.</li>
+            <li><code>aria-hidden="true"</code>: Süs amaçlı dalgalar ekran okuyuculara okunmaz.</li>
+        </ul>
+
+        <!-- ================================================= -->
+        <h2 id="hatalar"><span class="num">13.</span>Sık Yapılan Hatalar</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Belirti</th><th>Sebep</th><th>Çözüm</th></tr>
+                <tr>
+                    <td><code>ApexCharts is not defined</code></td>
+                    <td>Kütüphane yüklenmeden grafik kodu çalıştı.</td>
+                    <td>Kütüphane <code>&lt;script&gt;</code> satırını kendi kodundan <b>önce</b> koy.</td>
+                </tr>
+                <tr>
+                    <td><code>Element not found</code> veya hiçbir şey çizilmiyor</td>
+                    <td>Grafik kodu çalıştığında <code>&lt;div&gt;</code> henüz sayfada yok, ya da id yanlış yazılmış.</td>
+                    <td>Script'i <code>&lt;/body&gt;</code> öncesine koy veya kodu <code>DOMContentLoaded</code> içine al. id'yi kontrol et (<code>#</code> unutma).</td>
+                </tr>
+                <tr>
+                    <td>Grafik çok küçük / genişliği 0</td>
+                    <td>Grafik, gizli (<code>display: none</code>) bir alanda çizildi. Örn. kapalı bir Bootstrap collapse veya sekme içinde.</td>
+                    <td>Alan açıldıktan sonra <code>grafik.render()</code> çağır veya <code>window.dispatchEvent(new Event("resize"))</code> ile yeniden boyutlandır.</td>
+                </tr>
+                <tr>
+                    <td>Sayfa yatay kayıyor</td>
+                    <td>Grid/flex içindeki grafik küçülemiyor.</td>
+                    <td>Grafiği saran kutuya <code>min-width: 0</code> ver.</td>
+                </tr>
+                <tr>
+                    <td>Aynı grafik iki kere çiziliyor</td>
+                    <td><code>render()</code> iki kez çağrıldı.</td>
+                    <td>Güncellemek için <code>updateSeries</code> kullan, yeniden oluşturacaksan önce <code>destroy()</code> çağır.</td>
+                </tr>
+                <tr>
+                    <td>Eksen değerleri garip, toplamlar yanlış</td>
+                    <td>PHP'den sayılar metin olarak geldi (<code>"5"</code>).</td>
+                    <td>PHP'de <code>(int)</code> ile çevir.</td>
+                </tr>
+                <tr>
+                    <td>Türkçe karakterler <code>ç</code> gibi görünüyor</td>
+                    <td><code>json_encode</code> varsayılan olarak kaçış yapar.</td>
+                    <td><code>JSON_UNESCAPED_UNICODE</code> bayrağını ekle. (JavaScript yine de doğru okur, sadece kaynakta çirkin görünür.)</td>
+                </tr>
+                <tr>
+                    <td>Koyu sitede grafiğin beyaz kutusu var</td>
+                    <td>Grafik kendi arka planını çiziyor.</td>
+                    <td><code>chart.background: "transparent"</code> ve <code>theme.mode: "dark"</code>.</td>
+                </tr>
+                <tr>
+                    <td>Pasta grafik boş</td>
+                    <td><code>series</code> nesne dizisi olarak yazıldı.</td>
+                    <td>Pie/donut/radialBar'da düz sayı dizisi kullan: <code>[12, 9, 7]</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>colors: ["var(--Blue)"]</code> çalışmıyor</td>
+                    <td>ApexCharts CSS değişkenini çözemez.</td>
+                    <td><code>getComputedStyle</code> ile değeri oku (Bölüm 7.4).</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="box tip">
+            <strong>İpucu: Hata ayıklamanın 1 numaralı aracı</strong>
+            <p>Tarayıcıda <b>F12</b> tuşuna bas ve <b>Console</b> sekmesine bak. Kırmızı yazılar sana neyin yanlış gittiğini söyler. Kodunda <code>console.log(adetler)</code> yazarak PHP'den gelen veriyi de burada görebilirsin.</p>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="kopya"><span class="num">14.</span>Hızlı Başvuru (kopya kağıdı)</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>İstediğin şey</th><th>Yazman gereken</th></tr>
+                <tr><td>Grafik türü</td><td><code>chart: { type: "line" }</code></td></tr>
+                <tr><td>Yükseklik</td><td><code>chart: { height: 300 }</code></td></tr>
+                <tr><td>Menüyü gizle</td><td><code>chart: { toolbar: { show: false } }</code></td></tr>
+                <tr><td>Animasyonu kapat</td><td><code>chart: { animations: { enabled: false } }</code></td></tr>
+                <tr><td>Sadece şekil (eksensiz)</td><td><code>chart: { sparkline: { enabled: true } }</code></td></tr>
+                <tr><td>Şeffaf arka plan</td><td><code>chart: { background: "transparent" }</code></td></tr>
+                <tr><td>Koyu tema</td><td><code>theme: { mode: "dark" }</code></td></tr>
+                <tr><td>Renk</td><td><code>colors: ["#3955A2"]</code></td></tr>
+                <tr><td>Yumuşak çizgi</td><td><code>stroke: { curve: "smooth" }</code></td></tr>
+                <tr><td>Gradyan dolgu</td><td><code>fill: { type: "gradient" }</code></td></tr>
+                <tr><td>Sayı etiketlerini gizle</td><td><code>dataLabels: { enabled: false }</code></td></tr>
+                <tr><td>Göstergeyi alta al</td><td><code>legend: { position: "bottom" }</code></td></tr>
+                <tr><td>Izgarayı gizle</td><td><code>grid: { show: false }</code></td></tr>
+                <tr><td>Y ekseni 0'dan başlasın</td><td><code>yaxis: { min: 0 }</code></td></tr>
+                <tr><td>Yatay çubuk</td><td><code>plotOptions: { bar: { horizontal: true } }</code></td></tr>
+                <tr><td>Yuvarlak köşeli sütun</td><td><code>plotOptions: { bar: { borderRadius: 5 } }</code></td></tr>
+                <tr><td>Tooltip metni</td><td><code>tooltip: { y: { formatter: v =&gt; v + " görev" } }</code></td></tr>
+                <tr><td>Veri yokken mesaj</td><td><code>noData: { text: "Veri yok" }</code></td></tr>
+                <tr><td>Veriyi güncelle</td><td><code>grafik.updateSeries([{ data: [...] }])</code></td></tr>
+                <tr><td>Ayarı güncelle</td><td><code>grafik.updateOptions({ ... })</code></td></tr>
+                <tr><td>Grafiği sil</td><td><code>grafik.destroy()</code></td></tr>
+                <tr><td>PHP dizisini JS'e aktar</td><td><code>const x = &lt;?= json_encode($dizi) ?&gt;;</code></td></tr>
+            </table>
+        </div>
+
+        <!-- ================================================= -->
+        <h2 id="alistirma"><span class="num">15.</span>Alıştırmalar</h2>
+
+        <p>Öğrendiklerini pekiştirmek için bunları sırayla dene. Takılırsan çözüme bak.</p>
+
+        <details>
+            <summary>Alıştırma 1 — İlk grafiğin rengini yeşil, çizgisini yumuşak yap</summary>
+            <div class="code-box">
+                <div class="code-head">Çözüm <button class="copy-btn">Kopyala</button></div>
+                <pre><code class="language-javascript">{
+    chart: { type: "line", height: 300 },
+    series: [{ name: "Görev", data: [3, 5, 2, 8, 6, 4, 7] }],
+    xaxis: { categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] },
+    colors: ["#22c55e"],
+    stroke: { curve: "smooth" }
+}</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Alıştırma 2 — "Tamamlanan" ve "Bekleyen" görevleri donut grafikte göster</summary>
+            <div class="code-box">
+                <div class="code-head">Çözüm <button class="copy-btn">Kopyala</button></div>
+                <pre><code class="language-javascript">{
+    chart: { type: "donut", height: 280 },
+    series: [4, 11],
+    labels: ["Tamamlanan", "Bekleyen"],
+    colors: ["#22c55e", "#3955A2"],
+    legend: { position: "bottom" }
+}</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Alıştırma 3 — Veritabanındaki tamamlanan ve bekleyen görev sayısını PHP ile çekip Alıştırma 2'deki grafiğe ver</summary>
+            <div class="code-box">
+                <div class="code-head">Çözüm <button class="copy-btn">Kopyala</button></div>
+                <pre><code class="language-php">&lt;?php
+include("config.php");
+
+$s = $conn-&gt;query(
+    "SELECT COALESCE(SUM(isCompleted = 1), 0) AS biten,
+            COALESCE(SUM(isCompleted = 0), 0) AS bekleyen
+     FROM tasks"
+)-&gt;fetch_assoc();
+
+$biten    = (int) $s["biten"];
+$bekleyen = (int) $s["bekleyen"];
+?&gt;
+
+&lt;div id="durumGrafik"&gt;&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    new ApexCharts(document.querySelector("#durumGrafik"), {
+        chart: { type: "donut", height: 280 },
+        series: [&lt;?= $biten ?&gt;, &lt;?= $bekleyen ?&gt;],
+        labels: ["Tamamlanan", "Bekleyen"],
+        colors: ["#22c55e", "#3955A2"],
+        legend: { position: "bottom" }
+    }).render();
+&lt;/script&gt;</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Alıştırma 4 — Görevler sayfasının üstüne kullanıcının son 7 günlük grafiğini koy</summary>
+            <p>İpucu: Bölüm 10'daki "Adım 6" (boş günleri doldurma) ve "Adım 7" (sadece giriş yapan kullanıcı) kodlarını birleştir. Grafiği <code>#taskContainer</code> içinde, başlığın altına bir <code>.grafik-kart</code> olarak ekle. Koyu tema ayarlarını (Bölüm 6) unutma.</p>
+        </details>
+
+        <details>
+            <summary>Alıştırma 5 — Bir görev tamamlanınca grafik sayfa yenilenmeden güncellensin</summary>
+            <p>İpucu: Bölüm 11'deki <code>chart_data.php</code> dosyasını oluştur. Grafiği <code>const grafik = ...</code> olarak global bir değişkende tut. <code>task_system.js</code>'te <code>result.trim() === "success"</code> bloğunun sonuna <code>veriGetir(7);</code> ekle.</p>
+        </details>
+
+        <!-- ================================================= -->
+        <h2 id="kaynaklar"><span class="num">16.</span>Kaynaklar</h2>
+
+        <ul>
+            <li><a href="https://apexcharts.com/javascript-chart-demos/" target="_blank" rel="noopener">Resmi demolar</a>: Her grafik türünün onlarca örneği ve kaynak kodu var. <b>En faydalı kaynak.</b></li>
+            <li><a href="https://apexcharts.com/docs/installation/" target="_blank" rel="noopener">Resmi dokümantasyon</a>: Kurulum ve temel kavramlar.</li>
+            <li><a href="https://apexcharts.com/docs/options/" target="_blank" rel="noopener">Options (ayarlar) referansı</a>: Her ayarın tek tek açıklaması.</li>
+            <li><a href="https://apexcharts.com/docs/methods/" target="_blank" rel="noopener">Methods</a>: <code>updateSeries</code>, <code>updateOptions</code>, <code>destroy</code> vb.</li>
+            <li><a href="https://github.com/apexcharts/apexcharts.js" target="_blank" rel="noopener">GitHub</a>: Sorunlar (Issues) bölümünde başkalarının yaşadığı hatalar ve çözümleri.</li>
+            <li><a href="https://www.php.net/manual/tr/function.json-encode.php" target="_blank" rel="noopener">PHP json_encode</a>: PHP resmi kılavuzu.</li>
+        </ul>
+
+        <p class="footer-note">Bu rehber Day Not projesi için hazırlandı. Örneklerdeki ApexCharts sürümü: 3.54.1.</p>
+
+    </main>
+
+    <aside class="try-panel" id="tryPanel">
+        <div class="try-panel-head">
+            <div>
+                <strong>🧪 Deneme Alanı</strong>
+                <span>Kod örneklerindeki <b>▶ Dene</b> düğmesine bas, kod buraya gelsin.</span>
+            </div>
+            <a href="playground.html" target="_blank" rel="noopener">Tam ekran ↗</a>
+        </div>
+        <iframe id="tryFrame" title="Deneme Alanı"></iframe>
+    </aside>
+</div>
+
+<!-- Prism (kod renklendirme) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+<!-- ApexCharts (canlı örnekler) -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"></script>
+
+<script>
+    // ---------- Kopyala düğmeleri ----------
+    document.querySelectorAll(".copy-btn").forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+            const code = btn.closest(".code-box").querySelector("code").innerText;
+            try {
+                await navigator.clipboard.writeText(code);
+                btn.textContent = "Kopyalandı ✓";
+            } catch (e) {
+                btn.textContent = "Kopyalanamadı";
+            }
+            setTimeout(function () { btn.textContent = "Kopyala"; }, 1500);
+        });
+    });
+
+    // ---------- "▶ Dene" düğmeleri + Deneme Alanı ----------
+    (function () {
+        const frame = document.getElementById("tryFrame");
+        const wide = window.matchMedia("(min-width: 1300px)");
+        let frameReady = false;
+        let pending = null;
+
+        function ensureFrame() {
+            if (!frame.getAttribute("src")) frame.setAttribute("src", "playground.html?embed=1");
+        }
+
+        if (wide.matches) ensureFrame();
+        if (wide.addEventListener) {
+            wide.addEventListener("change", function (e) { if (e.matches) ensureFrame(); });
+        }
+
+        window.addEventListener("message", function (e) {
+            if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
+            if (e.data && e.data.type === "pg-ready") {
+                frameReady = true;
+                if (pending) { send(pending); pending = null; }
+            }
+        });
+
+        function send(code) {
+            frame.contentWindow.postMessage({ type: "pg-load", code: code }, location.origin);
+        }
+
+        function openInPanelOrTab(code, box) {
+            if (wide.matches) {
+                ensureFrame();
+                if (frameReady) send(code); else pending = code;
+                box.classList.add("flash");
+                setTimeout(function () { box.classList.remove("flash"); }, 600);
+            } else {
+                const enc = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(code)))));
+                window.open("playground.html#k=" + enc, "_blank", "noopener");
+            }
+        }
+
+        // Ortak girintiyi kaldır (script içinden çıkarılan JS için)
+        function dedent(text) {
+            const lines = text.replace(/^\s*\n/, "").replace(/\s+$/, "").split("\n");
+            const indents = lines.filter(function (l) { return l.trim(); })
+                .map(function (l) { return l.match(/^ */)[0].length; });
+            const min = indents.length ? Math.min.apply(null, indents) : 0;
+            return lines.map(function (l) { return l.slice(min); }).join("\n");
+        }
+
+        function langOf(box) {
+            const code = box.querySelector("code");
+            const m = code && code.className.match(/language-(\w+)/);
+            return m ? m[1] : "";
+        }
+
+        function textOf(box) {
+            return box.querySelector("code").textContent;
+        }
+
+        // Bir kod kutusundan {html, css, js} üret; denenemiyorsa null
+        function payloadFor(box) {
+            if (box.dataset.try === "no") return null;
+
+            const group = box.dataset.group;
+            if (group) {
+                const boxes = document.querySelectorAll('.code-box[data-group="' + group + '"]');
+                if (boxes[boxes.length - 1] !== box) return null;   // düğme sadece son kutuda
+                const code = { html: "", css: "", js: "" };
+                boxes.forEach(function (b) {
+                    const l = langOf(b);
+                    if (l === "markup") code.html += textOf(b) + "\n";
+                    else if (l === "css") code.css += textOf(b) + "\n";
+                    else if (l === "javascript") code.js += textOf(b) + "\n";
+                });
+                return code;
+            }
+
+            const lang = langOf(box);
+            const text = textOf(box);
+            if (text.indexOf("fetch(") !== -1) return null;          // sunucu gerektirir
+
+            if (lang === "markup" && text.indexOf("new ApexCharts") !== -1) {
+                if (/<html[\s>]/i.test(text)) return { html: text, css: "", js: "" };
+                // Satır içi <script> kısmını JavaScript sekmesine taşı
+                let js = "";
+                const html = text.replace(/<script>([\s\S]*?)<\/script>/gi, function (_, inner) {
+                    js += dedent(inner) + "\n";
+                    return "";
+                }).replace(/\n{3,}/g, "\n\n").trim();
+                return { html: html, css: "", js: js.trim() };
+            }
+
+            if (lang === "javascript") {
+                if (text.indexOf("new ApexCharts") !== -1) return { html: "", css: "", js: text };
+                const t = text.trim();
+                if (t.charAt(0) === "{" && t.indexOf("series") !== -1) {
+                    return {
+                        html: '<div id="grafik"></div>',
+                        css: "",
+                        js: 'new ApexCharts(document.querySelector("#grafik"), ' + t + ').render();'
+                    };
+                }
+            }
+            return null;
+        }
+
+        document.querySelectorAll(".code-box").forEach(function (box) {
+            const copyBtn = box.querySelector(".copy-btn");
+            if (!copyBtn) return;
+            const payload = payloadFor(box);
+            if (!payload) return;
+
+            const tryBtn = document.createElement("button");
+            tryBtn.className = "try-btn";
+            tryBtn.type = "button";
+            tryBtn.textContent = "▶ Dene";
+            tryBtn.title = "Bu kodu Deneme Alanı'nda aç";
+            tryBtn.addEventListener("click", function () { openInPanelOrTab(payload, box); });
+
+            const wrap = document.createElement("span");
+            wrap.className = "btns";
+            copyBtn.replaceWith(wrap);
+            wrap.appendChild(tryBtn);
+            wrap.appendChild(copyBtn);
+        });
+    })();
+
+    // ---------- Mobil menü ----------
+    const sidebar = document.getElementById("sidebar");
+    document.getElementById("menuBtn").addEventListener("click", function () {
+        sidebar.classList.toggle("open");
+    });
+    sidebar.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () { sidebar.classList.remove("open"); });
+    });
+
+    // ---------- Aktif bölümü menüde işaretle ----------
+    const links = Array.from(sidebar.querySelectorAll("a"));
+    const sections = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+    if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    links.forEach(function (l) { l.classList.remove("active"); });
+                    const link = sidebar.querySelector('a[href="#' + entry.target.id + '"]');
+                    if (link) link.classList.add("active");
+                }
+            });
+        }, { rootMargin: "-60px 0px -75% 0px" });
+        sections.forEach(function (s) { if (s) io.observe(s); });
+    }
+
+    // ---------- Canlı örnek grafikler ----------
+    (function () {
+        if (typeof ApexCharts === "undefined") return;
+
+        const dark = (document.documentElement.dataset.theme === "dark") ||
+            (document.documentElement.dataset.theme !== "light" &&
+             window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+        const ortak = {
+            background: "transparent",
+            foreColor: dark ? "#a1a6ae" : "#57606a",
+            toolbar: { show: false },
+            fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+        };
+        const tema = { mode: dark ? "dark" : "light" };
+        const gun = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+        const veri = [3, 5, 2, 8, 6, 4, 7];
+        const gridRenk = dark ? "#2c2e33" : "#e5e7eb";
+
+        function ciz(id, ayar) {
+            const el = document.getElementById(id);
+            if (!el) return null;
+            ayar.chart = Object.assign({}, ortak, ayar.chart);
+            ayar.theme = tema;
+            ayar.grid = Object.assign({ borderColor: gridRenk }, ayar.grid || {});
+            const g = new ApexCharts(el, ayar);
+            g.render();
+            return g;
+        }
+
+        // Bölüm 3
+        ciz("ex-first", {
+            chart: { type: "line", height: 300 },
+            series: [{ name: "Görev", data: veri }],
+            xaxis: { categories: gun }
+        });
+
+        // Bölüm 4
+        ciz("ex-two-series", {
+            chart: { type: "line", height: 260 },
+            series: [
+                { name: "Eklenen", data: [4, 6, 3, 7, 5, 8, 6] },
+                { name: "Tamamlanan", data: [2, 4, 3, 5, 4, 6, 5] }
+            ],
+            xaxis: { categories: gun },
+            stroke: { curve: "smooth", width: 3 }
+        });
+
+        // Bölüm 5
+        ciz("ex-line", {
+            chart: { type: "line", height: 220 },
+            series: [{ name: "Görev", data: veri }],
+            xaxis: { categories: gun },
+            stroke: { curve: "smooth" }
+        });
+        ciz("ex-area", {
+            chart: { type: "area", height: 220 },
+            series: [{ name: "Görev", data: veri }],
+            xaxis: { categories: gun },
+            stroke: { curve: "smooth" },
+            dataLabels: { enabled: false }
+        });
+        ciz("ex-bar", {
+            chart: { type: "bar", height: 220 },
+            series: [{ name: "Görev", data: veri }],
+            xaxis: { categories: gun },
+            plotOptions: { bar: { borderRadius: 4, columnWidth: "50%" } },
+            dataLabels: { enabled: false }
+        });
+        ciz("ex-hbar", {
+            chart: { type: "bar", height: 220 },
+            series: [{ name: "Görev", data: [12, 9, 7, 4] }],
+            xaxis: { categories: ["İş", "Okul", "Ev", "Spor"] },
+            plotOptions: { bar: { horizontal: true, borderRadius: 4 } }
+        });
+        ciz("ex-pie", {
+            chart: { type: "pie", height: 260 },
+            series: [12, 9, 7, 4],
+            labels: ["İş", "Okul", "Ev", "Spor"],
+            legend: { position: "bottom" },
+            stroke: { colors: [dark ? "#18191c" : "#ffffff"] }
+        });
+        ciz("ex-donut", {
+            chart: { type: "donut", height: 260 },
+            series: [12, 9, 7, 4],
+            labels: ["İş", "Okul", "Ev", "Spor"],
+            plotOptions: { pie: { donut: { size: "65%" } } },
+            legend: { position: "bottom" },
+            stroke: { colors: [dark ? "#18191c" : "#ffffff"] }
+        });
+        ciz("ex-radial", {
+            chart: { type: "radialBar", height: 260 },
+            series: [78],
+            labels: ["Tamamlandı"],
+            plotOptions: {
+                radialBar: {
+                    hollow: { size: "60%" },
+                    dataLabels: {
+                        value: { fontSize: "28px", formatter: function (d) { return d + "%"; } }
+                    }
+                }
+            },
+            stroke: { lineCap: "round" }
+        });
+
+        // Bölüm 6
+        ciz("ex-style", {
+            chart: { type: "area", height: 280 },
+            series: [{ name: "Görev", data: veri }],
+            xaxis: { categories: gun },
+            colors: ["#3955A2"],
+            title: { text: "Haftalık Görevler", style: { fontSize: "16px", color: dark ? "#e6e7e9" : "#1f2328" } },
+            stroke: { curve: "smooth", width: 3 },
+            fill: { type: "gradient", gradient: { opacityFrom: 0.5, opacityTo: 0 } },
+            markers: { size: 5 },
+            dataLabels: { enabled: false },
+            grid: { strokeDashArray: 4 },
+            tooltip: { y: { formatter: function (d) { return d + " görev"; } } }
+        });
+
+        // Bölüm 7 (her zaman koyu kart)
+        new ApexCharts(document.getElementById("ex-card"), {
+            chart: {
+                type: "bar",
+                height: 220,
+                background: "transparent",
+                foreColor: "rgba(255,255,255,0.5)",
+                toolbar: { show: false },
+                fontFamily: ortak.fontFamily
+            },
+            theme: { mode: "dark" },
+            series: [{ name: "Görev", data: [2, 4, 3, 6, 5, 3, 1] }],
+            xaxis: {
+                categories: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
+                axisBorder: { show: false },
+                axisTicks: { show: false }
+            },
+            colors: ["#3955A2"],
+            plotOptions: { bar: { borderRadius: 5, columnWidth: "45%" } },
+            dataLabels: { enabled: false },
+            grid: { borderColor: "rgba(255,255,255,0.06)", strokeDashArray: 4 }
+        }).render();
+
+        // Bölüm 9
+        const canli = ciz("ex-live", {
+            chart: { type: "bar", height: 260 },
+            series: [{ name: "Görev", data: veri.slice() }],
+            xaxis: { categories: gun },
+            colors: ["#3955A2"],
+            dataLabels: { enabled: false }
+        });
+
+        document.getElementById("d-rastgele").addEventListener("click", function () {
+            const yeni = [];
+            for (let i = 0; i < 7; i++) yeni.push(Math.floor(Math.random() * 10) + 1);
+            canli.updateSeries([{ data: yeni }]);
+        });
+
+        const renkler = ["#3955A2", "#22c55e", "#e09b20", "#d64545"];
+        let renkNo = 0;
+        document.getElementById("d-renk").addEventListener("click", function () {
+            renkNo = (renkNo + 1) % renkler.length;
+            canli.updateOptions({ colors: [renkler[renkNo]] });
+        });
+
+        let sutunMu = true;
+        document.getElementById("d-tur").addEventListener("click", function () {
+            sutunMu = !sutunMu;
+            canli.updateOptions({ chart: { type: sutunMu ? "bar" : "line" } });
+        });
+    })();
+</script>
+
+</body>
+</html>

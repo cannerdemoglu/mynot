@@ -1,18 +1,19 @@
-<?php
-session_start();
+<?php 
 include("../config.php");
+session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $task = $_POST["task"];
-    $userID = $_SESSION["u_ID"];
+$uID = $_SESSION['u_ID']; //Giriş yapan kullanıcı ID.
+$gorev = $_POST['gorevEkle'];
 
-    if (!empty($task) && !empty($userID)) {
-        $stmt = $conn->prepare("INSERT INTO tasks (uID, task) VALUES (?, ?)");
-        $stmt->bind_param("is", $userID, $task);
-        $stmt->execute();
-    }
-}
+// echo $gorev;
 
-header("Location: ../task.php");
-exit();
+
+$sql = "INSERT INTO tasks (uID, task, isCompleted)
+        VALUES (?, ?, 0)";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute([$uID, $gorev]);
+
+echo "Görev Başarıyla eklendi!";
+
 ?>

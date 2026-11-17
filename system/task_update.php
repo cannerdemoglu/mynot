@@ -1,23 +1,25 @@
-<?php 
-session_start();
-include("../config.php");
 
-if (!isset($_SESSION["u_ID"])) {
-    http_response_code(401);
-    exit;
+<?php
+
+include("../config.php");
+session_start();
+
+$u_ID = $_SESSION['u_ID'];
+
+$taskID = $_POST['taskID'];
+$isCompleted = $_POST['isCompleted'];
+
+$sql = "UPDATE tasks 
+        SET isCompleted = ? 
+        WHERE taskID = ? AND uID = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iii", $isCompleted, $taskID, $u_ID);
+
+if ($stmt->execute()) {
+    echo "success";
+} else {
+    echo "error";
 }
 
-$userID = $_SESSION["u_ID"];
-$taskID = $_POST["taskID"];
-
-$stmt = $conn->prepare(
-    "UPDATE tasks
-     SET isCompleted = 1
-     WHERE taskID = ? AND uID = ?"
-);
-
-$stmt->bind_param("ii", $taskID, $userID);
-$stmt->execute();
-
-echo "success";
 ?>
